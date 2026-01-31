@@ -29,7 +29,7 @@ import NeetUg from '../src/Pages/NeetUG.jsx';
 import NeetPg from '../src/Pages/NeetPg.jsx';
 import ProtectedRoute from './Components/ProtectedRoute.jsx';
 import NotificationContainer from './Components/NotificationContainer.jsx';
-import Plab1 from '../src/Pages/Plab1.jsx';
+import Plab1 from '../src/Pages/PLAB1.JSX';
 import FMGE from '../src/Pages/FMGE.jsx';
 import PricingPage from '../src/Pages/PricingPage.jsx';
 import PYTSubjects from '../src/Pages/PYTSubjects.jsx';
@@ -99,19 +99,67 @@ function App() {
           }
         />
 
-        {/* Public Course Routes */}
-        <Route path="/courses/:courseId/subjects" element={<SubjectsPage />} />
-        <Route path="/subjects/:subjectId/chapters" element={<ChaptersPage />} />
-        <Route path="/chapters/:chapterId/topics" element={<TopicsPage />} />
-        <Route path="/courses/amc" element={<AMC />} />
-        <Route path="/courses/neet-ug" element={<NeetUg />} />
-        <Route path="/courses/neet-pg" element={<NeetPg />} />
-        <Route path="/courses/plab1" element={<Plab1 />} />
-        <Route path="/courses/FMGE" element={<FMGE />} />
-        <Route path="/courses/:courseId/pyt" element={<PYTSubjects />} />
-        <Route path="/pyt/:subjectId/topics" element={<PYTTopics />} />
-        <Route path="/courses/amc/subjects/:subjectId" element={<AMCSubjectPage />} />
-        <Route path="/discussions/:discussionId" element={<DiscussionPostsPage />} />
+        {/* Protected Course Routes - Require Authentication */}
+        <Route path="/courses/:courseId/subjects" element={
+          <ProtectedRoute>
+            <SubjectsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/subjects/:subjectId/chapters" element={
+          <ProtectedRoute>
+            <ChaptersPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/chapters/:chapterId/topics" element={
+          <ProtectedRoute>
+            <TopicsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/courses/amc" element={
+          <ProtectedRoute>
+            <AMC />
+          </ProtectedRoute>
+        } />
+        <Route path="/courses/neet-ug" element={
+          <ProtectedRoute>
+            <NeetUg />
+          </ProtectedRoute>
+        } />
+        <Route path="/courses/neet-pg" element={
+          <ProtectedRoute>
+            <NeetPg />
+          </ProtectedRoute>
+        } />
+        <Route path="/courses/plab1" element={
+          <ProtectedRoute>
+            <Plab1 />
+          </ProtectedRoute>
+        } />
+        <Route path="/courses/FMGE" element={
+          <ProtectedRoute>
+            <FMGE />
+          </ProtectedRoute>
+        } />
+        <Route path="/courses/:courseId/pyt" element={
+          <ProtectedRoute>
+            <PYTSubjects />
+          </ProtectedRoute>
+        } />
+        <Route path="/pyt/:subjectId/topics" element={
+          <ProtectedRoute>
+            <PYTTopics />
+          </ProtectedRoute>
+        } />
+        <Route path="/courses/amc/subjects/:subjectId" element={
+          <ProtectedRoute>
+            <AMCSubjectPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/discussions/:discussionId" element={
+          <ProtectedRoute>
+            <DiscussionPostsPage />
+          </ProtectedRoute>
+        } />
 
         {/* Protected Quiz Routes */}
         <Route
@@ -148,9 +196,17 @@ function App() {
         />
         <Route path="/rankings" element={<RankingsPage />} />
 
-        {/* Notes Routes */}
-        <Route path="/notes" element={<NotesPage />} />
-        <Route path="/notes/:topicId" element={<NotesPage />} />
+        {/* Protected Notes Routes */}
+        <Route path="/notes" element={
+          <ProtectedRoute>
+            <NotesPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/notes/:topicId" element={
+          <ProtectedRoute>
+            <NotesPage />
+          </ProtectedRoute>
+        } />
       </Routes>
       <Footer />
     </Router>
