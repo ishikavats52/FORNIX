@@ -3,6 +3,7 @@ import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { enrollInCourse, selectCoursesLoading, selectCoursesError, fetchCourseDetails } from '../redux/slices/coursesSlice';
 import { selectUser } from '../redux/slices/authSlice';
+import TermsModal from '../Components/TermsModal';
 
 const EnrollmentPage = () => {
     const { courseId } = useParams();
@@ -17,6 +18,7 @@ const EnrollmentPage = () => {
 
     // Mock state for plan details (In real app, fetch plan/course details)
     const [planDetails, setPlanDetails] = useState(null);
+    const [showTerms, setShowTerms] = useState(false);
 
     useEffect(() => {
         // Fetch course details to get plan info (simplified for now)
@@ -34,7 +36,21 @@ const EnrollmentPage = () => {
         }
     }, [dispatch, courseId, planId]);
 
-    const handleConfirmEnrollment = async () => {
+    const handlePaymentClick = () => {
+        if (!user) {
+            alert("Please login to enroll");
+            navigate('/login');
+            return;
+        }
+        setShowTerms(true);
+    };
+
+    const handleTermsAgreed = () => {
+        setShowTerms(false);
+        processEnrollment();
+    };
+
+    const processEnrollment = async () => {
         if (!user) {
             alert("Please login to enroll");
             navigate('/login');
@@ -88,7 +104,7 @@ const EnrollmentPage = () => {
 
                 <div className="space-y-3">
                     <button
-                        onClick={handleConfirmEnrollment}
+                        onClick={handlePaymentClick}
                         disabled={loading}
                         className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-lg shadow-orange-200"
                     >
@@ -103,6 +119,12 @@ const EnrollmentPage = () => {
                 </div>
                 {error && <p className="text-red-500 text-sm mt-4 text-center">{error}</p>}
             </div>
+
+            <TermsModal
+                isOpen={showTerms}
+                onClose={() => setShowTerms(false)}
+                onAgree={handleTermsAgreed}
+            />
         </div>
     );
 };

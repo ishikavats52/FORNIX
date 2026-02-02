@@ -4,12 +4,13 @@ import banner from '../Assets/banner.avif';
 
 function Home() {
   const [openFaq, setOpenFaq] = useState(null);
+  const [flippedCards, setFlippedCards] = useState({});
 
   const stats = [
     { value: "5000+", label: "Students Enrolled" },
-    { value: "500+", label: "Qualified Doctors" },
+    { value: "4000+", label: "Qualified Doctors" },
     { value: "100+", label: "Expert Faculty" },
-    { value: "98%", label: "Success Rate" }
+    { value: "90%", label: "Success Rate" }
   ];
 
   const courses = [
@@ -62,6 +63,48 @@ function Home() {
               </Link>
             </div> */}
           </div>
+
+          {/* Social Media Icons - Vertical */}
+          <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-20">
+            {/* WhatsApp */}
+            <a
+              href="https://wa.me/996552448787"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full shadow-lg transition-all transform hover:scale-110 group"
+              aria-label="WhatsApp"
+            >
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+              </svg>
+            </a>
+
+            {/* Instagram */}
+            <a
+              href="https://www.instagram.com/fornix.amc?utm_source=qr&igsh=czgzMGx4ZzBzb3c="
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 hover:from-purple-600 hover:via-pink-600 hover:to-orange-500 text-white p-3 rounded-full shadow-lg transition-all transform hover:scale-110"
+              aria-label="Instagram"
+            >
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+              </svg>
+            </a>
+
+            {/* Facebook */}
+            <a
+              href="https://www.facebook.com/share/17ts8VVkbF/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-all transform hover:scale-110"
+              aria-label="Facebook"
+            >
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+              </svg>
+            </a>
+          </div>
         </div>
       </section>
 
@@ -83,23 +126,117 @@ function Home() {
           <div className="text-center mb-16">
             <span className="text-orange-500 font-bold uppercase tracking-wide">Why Us</span>
             <h2 className="text-4xl font-bold text-gray-900 mt-2">Reinventing Medical Education</h2>
+            <p className="text-gray-600 mt-4">Click any card to learn more</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-10 items-start">
             {[
-              { title: "Clinically Oriented", desc: "Learn with case-based scenarios that mirror real-world practice.", icon: "🩺" },
-              { title: "High-Yield QBank", desc: "10,000+ questions curated to test high-probability exam topics.", icon: "📘" },
-              { title: "Smart Analytics", desc: "Track your weak spots with our AI-driven performance dashboard.", icon: "📊" },
-              { title: "Audio Podcast", desc: "High-yield medical audio content for learning anytime, anywhere.", icon: "🎧" },
-              { title: "24/7 Chatbot Availability", desc: "High-yield medical audio content for learning anytime, anywhere.", icon: "🤖" },
-              { title: "Revise smart. Perform better.", desc: "High-yield medical audio content for learning anytime, anywhere.", icon: "🧠" }
-
-
+              {
+                title: "Clinically Oriented",
+                desc: "Learn with case-based scenarios that mirror real-world practice.",
+                icon: "🩺",
+                details: [
+                  "Real patient case studies from top medical institutions",
+                  "Clinical reasoning frameworks used by expert physicians",
+                  "Integration of basic sciences with clinical practice",
+                  "Step-by-step diagnostic approach training"
+                ]
+              },
+              {
+                title: "High-Yield QBank",
+                desc: "7000+ questions curated to test high-probability exam topics.",
+                icon: "📘",
+                details: [
+                  "Questions written by very experienced doctors",
+                  "Detailed explanations for every answer choice",
+                  "Performance analytics to track your progress",
+                  "Regular updates based on latest exam patterns"
+                ]
+              },
+              {
+                title: "Smart Analytics",
+                desc: "Track your weak spots with our AI-driven performance dashboard.",
+                icon: "📊",
+                details: [
+                  "AI-powered weak area identification",
+                  "Personalized study recommendations",
+                  "Progress tracking across all subjects",
+                  "Predictive score estimation for exams"
+                ]
+              },
+              {
+                title: "Audio Podcasts",
+                desc: "High-yield medical audio content for learning anytime, anywhere.",
+                icon: "🎧",
+                details: [
+                  "Expert-narrated topic summaries",
+                  "Perfect for commute or workout sessions",
+                  "Covers high-yield topics across all subjects"
+                ]
+              },
+              {
+                title: "24/7 Chatbot Support",
+                desc: "Get instant answers to your medical queries round the clock.",
+                icon: "🤖",
+                details: [
+                  "AI-powered instant doubt resolution",
+                  "Access to medical knowledge database",
+                  "Quick concept clarifications",
+                  "Available across all devices"
+                ]
+              },
+              {
+                title: "Smart Revision",
+                desc: "Revise smart. Perform better with spaced repetition.",
+                icon: "🧠",
+                details: [
+                  "Scientifically-proven spaced repetition algorithm",
+                  "Flashcards for quick revision",
+                  "Custom revision schedules",
+                  "Focus on your weak areas automatically"
+                ]
+              }
             ].map((item, index) => (
-              <div key={index} className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 group">
-                <div className="text-5xl mb-6 group-hover:scale-110 transition duration-300">{item.icon}</div>
-                <h3 className="text-2xl font-bold mb-4 text-gray-800">{item.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+              <div
+                key={index}
+                className={`bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden cursor-pointer ${flippedCards[index] ? 'ring-2 ring-orange-500' : ''}`}
+                onClick={() => setFlippedCards(prev => prev[index] ? {} : { [index]: true })}
+              >
+                <div className="p-8">
+                  <div className="flex items-start justify-between">
+                    <div className="text-5xl mb-4">{item.icon}</div>
+                    <svg
+                      className={`w-6 h-6 text-orange-500 transition-transform duration-300 ${flippedCards[index] ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-3 text-gray-800">{item.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+
+                  {/* Expandable Details */}
+                  <div
+                    className={`transition-all duration-500 ease-in-out overflow-hidden ${flippedCards[index] ? 'max-h-96 opacity-100 mt-6' : 'max-h-0 opacity-0'
+                      }`}
+                  >
+                    <div className="border-t border-gray-200 pt-4">
+                      <h4 className="text-sm font-bold text-orange-500 uppercase tracking-wide mb-3">Key Features</h4>
+                      <ul className="space-y-2">
+                        {item.details.map((detail, i) => (
+                          <li key={i} className="flex items-start text-sm text-gray-700">
+                            <svg className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="leading-relaxed">{detail}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -175,7 +312,7 @@ function Home() {
 
       {/* FAQ Section */}
       <section className="py-24 max-w-4xl mx-auto px-6">
-        <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Frequently Asked Questions</h2>
+        <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">FAQ'S</h2>
         <div className="space-y-4">
           {faqs.map((faq, i) => (
             <div key={i} className="border border-gray-200 rounded-xl bg-white overflow-hidden">

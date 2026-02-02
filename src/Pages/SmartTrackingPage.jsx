@@ -132,6 +132,64 @@ function SmartTrackingPage() {
                     </select>
                 </div>
 
+
+                {/* Key Benefits Section - Professional Design */}
+                <div className="mb-12">
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                        {/* Header */}
+                        <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-8 py-6">
+                            <h2 className="text-2xl font-bold text-white">Why Smart Tracking Works</h2>
+                            <p className="text-orange-50 mt-1">Data-driven insights that transform your preparation strategy</p>
+                        </div>
+
+                        {/* Benefits Grid */}
+                        <div className="p-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <BenefitItem
+                                    title="Automatic Progress Monitoring"
+                                    description="Tracks your daily and weekly study progress automatically"
+                                />
+                                <BenefitItem
+                                    title="Subject Performance Analysis"
+                                    description="Shows subject-wise performance analysis"
+                                />
+                                <BenefitItem
+                                    title="Weak Area Identification"
+                                    description="Identifies weak topics based on wrong answers"
+                                />
+                                <BenefitItem
+                                    title="High-Yield Revision Areas"
+                                    description="Suggests high-yield revision areas"
+                                />
+                                <BenefitItem
+                                    title="Mock Test Score Trends"
+                                    description="Monitors mock test score trends over time"
+                                />
+                                <BenefitItem
+                                    title="Exam Readiness Prediction"
+                                    description="Predicts readiness level for AMC Part 1"
+                                />
+                                <BenefitItem
+                                    title="Strategic Revision Planning"
+                                    description="Helps plan smart revision instead of random reading"
+                                />
+                                <BenefitItem
+                                    title="Time vs Performance Insights"
+                                    description="Time-spent vs score improvement insights"
+                                />
+                                <BenefitItem
+                                    title="Personalized Recommendations"
+                                    description="Personalized improvement recommendations"
+                                />
+                                <BenefitItem
+                                    title="Goal Tracking & Accountability"
+                                    description="Keeps you accountable with goal tracking"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {data && (
                     <div className="space-y-8">
 
@@ -223,6 +281,20 @@ function SmartTrackingPage() {
                         </div>
                     </div>
                 )}
+            </div>
+        </div>
+    );
+}
+
+function BenefitItem({ title, description }) {
+    return (
+        <div className="flex gap-4 group">
+            <div className="flex-shrink-0">
+                <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 group-hover:scale-150 transition-transform"></div>
+            </div>
+            <div>
+                <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
             </div>
         </div>
     );

@@ -1,15 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser, logoutUser } from "../redux/slices/authSlice";
+import { selectUserProfile } from "../redux/slices/userSlice";
 import logo from "../assets/FORNIX Final Logo_transparent.png";
 
 function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
+  const userProfile = useSelector(selectUserProfile);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCoursesOpen, setIsCoursesOpen] = useState(false);
+  const [profilePictureUrl, setProfilePictureUrl] = useState(null);
+
+  // Load profile picture from userProfile or localStorage
+  useEffect(() => {
+    const userId = user?.user_id || user?.id || user?.uuid;
+    if (userId) {
+      const localStorageKey = `profile_picture_${userId}`;
+      const savedPicture = userProfile?.profile_picture || localStorage.getItem(localStorageKey);
+      setProfilePictureUrl(savedPicture);
+    }
+  }, [user, userProfile]);
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -112,9 +125,17 @@ function Header() {
                 <button
                   className="flex items-center gap-2 bg-orange-50 hover:bg-orange-100 px-4 py-2 rounded-full transition-all duration-300 border border-orange-200"
                 >
-                  <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                  </div>
+                  {profilePictureUrl ? (
+                    <img
+                      src={profilePictureUrl}
+                      alt="Profile"
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                  )}
                   <span className="text-gray-700 font-semibold text-sm max-w-[100px] truncate">
                     {user.name || 'User'}
                   </span>

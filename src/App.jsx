@@ -8,7 +8,7 @@ import { fetchUserProfile, selectUser } from './redux/slices/authSlice';
 import Home from '../src/Pages/Home.jsx'
 import About from '../src/Pages/About.jsx';
 import ContactUs from '../src/Pages/ContactUs.jsx';
-import Courses from '../src/Pages/Courses.jsx';
+// import Courses from '../src/Pages/Courses.jsx';
 import Footer from './Components/Footer.jsx';
 import Headers from './Components/Header.jsx';
 import Login from '../src/Pages/Login.jsx';
@@ -31,7 +31,7 @@ import ProtectedRoute from './Components/ProtectedRoute.jsx';
 import NotificationContainer from './Components/NotificationContainer.jsx';
 import Plab1 from '../src/Pages/PLAB1.JSX';
 import FMGE from '../src/Pages/FMGE.jsx';
-import PricingPage from '../src/Pages/PricingPage.jsx';
+import PricingPage from '../src/Pages/PricingPage.jsx';   
 import PYTSubjects from '../src/Pages/PYTSubjects.jsx';
 import PYTTopics from '../src/Pages/PYTTopics.jsx';
 import DiscussionPostsPage from '../src/Pages/DiscussionPostsPage.jsx';
@@ -62,7 +62,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<ContactUs />} />
-        <Route path="/courses" element={<Courses />} />
+        {/* <Route path="/courses" element={<Courses />} /> */}
         {/* <Route path="/pricingPage" element={<PricingPage />} /> */}
         <Route path="/enroll/:courseId" element={
           <ProtectedRoute>

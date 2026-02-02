@@ -104,6 +104,8 @@ const userSlice = createSlice({
       })
       .addCase(updateUserProfile.fulfilled, (state, action) => {
         state.loading = false;
+        console.log('userSlice: updateUserProfile response:', action.payload);
+        console.log('userSlice: profile_picture in response:', action.payload?.user?.profile_picture);
         // Merge the updated data with existing profile
         if (action.payload.success && action.payload.user) {
           state.profile = action.payload.user;
@@ -113,6 +115,7 @@ const userSlice = createSlice({
           // If API just returns success, merge the request data with existing profile
           state.profile = { ...state.profile, ...action.meta.arg };
         }
+        console.log('userSlice: Updated profile state:', state.profile);
       })
       .addCase(updateUserProfile.rejected, (state, action) => {
         state.loading = false;

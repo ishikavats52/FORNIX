@@ -84,11 +84,39 @@ const chatSlice = createSlice({
       })
       .addCase(sendMessageToAI.fulfilled, (state, action) => {
         state.loading = false;
+        console.log('chatSlice: Full API response:', action.payload);
+        
+        // Update session ID if provided
         if (action.payload.session_id) {
             state.sessionId = action.payload.session_id;
+            console.log('chatSlice: Session ID updated:', action.payload.session_id);
         }
+        
+        // Handle different possible response formats
+        let aiMessage = null;
+        
+        // Try different possible field names
         if (action.payload.ai_message) {
-            state.messages.push({ sender: 'ai', text: action.payload.ai_message });
+            aiMessage = action.payload.ai_message;
+        } else if (action.payload.response) {
+            aiMessage = action.payload.response;
+        } else if (action.payload.message) {
+            aiMessage = action.payload.message;
+        } else if (action.payload.answer) {
+            aiMessage = action.payload.answer;
+        } else if (typeof action.payload === 'string') {
+            aiMessage = action.payload;
+        }
+        
+        if (aiMessage) {
+            console.log('chatSlice: AI message found:', aiMessage);
+            state.messages.push({ sender: 'ai', text: aiMessage });
+        } else {
+            console.error('chatSlice: No AI message found in response. Payload:', action.payload);
+            state.messages.push({ 
+                sender: 'ai', 
+                text: 'I received your message but couldn\'t generate a proper response. Please try again or contact support.' 
+            });
         }
       })
       .addCase(sendMessageToAI.rejected, (state, action) => {

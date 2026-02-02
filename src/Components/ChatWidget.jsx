@@ -30,12 +30,40 @@ const ChatWidget = () => {
     const sessions = useSelector(selectChatSessions);
     const [showHistory, setShowHistory] = useState(false);
 
+    // Course selector state
+    const [selectedCourse, setSelectedCourse] = useState('General');
+
+    const courseOptions = [
+        { value: 'General', label: '🌐 General' },
+        { value: 'AMC', label: '🇦🇺 AMC' },
+        { value: 'NEET UG', label: '🎓 NEET UG' },
+        { value: 'NEET PG', label: '🏥 NEET PG' },
+        { value: 'FMGE', label: '🇮🇳 FMGE' },
+        { value: 'PLAB1', label: '🇬🇧 PLAB1' },
+    ];
+
     useEffect(() => {
         const userId = user?.user_id || user?.id;
         if (isOpen && userId) {
             dispatch(fetchChatSessions(userId));
         }
     }, [isOpen, user, dispatch]);
+
+    // Auto-detect course from URL on mount
+    useEffect(() => {
+        const path = window.location.pathname;
+        if (path.includes('/courses/amc')) {
+            setSelectedCourse('AMC');
+        } else if (path.includes('/courses/neet-ug')) {
+            setSelectedCourse('NEET UG');
+        } else if (path.includes('/courses/neet-pg')) {
+            setSelectedCourse('NEET PG');
+        } else if (path.includes('/courses/fmge')) {
+            setSelectedCourse('FMGE');
+        } else if (path.includes('/courses/plab1')) {
+            setSelectedCourse('PLAB1');
+        }
+    }, []);
 
     const handleSessionClick = (sessionId) => {
         dispatch(fetchSessionMessages(sessionId));
@@ -65,7 +93,7 @@ const ChatWidget = () => {
         dispatch(sendMessageToAI({
             userId: user?.user_id || user?.id || 'guest',
             query: input,
-            courseName: 'General', // Can be dynamic based on page
+            courseName: selectedCourse, // Use selected course instead of URL detection
             sessionId: sessionId
         }));
         setInput('');
@@ -87,7 +115,7 @@ const ChatWidget = () => {
                             <span className="text-lg">🤖</span>
                         </div>
                         <div>
-                            <h3 className="font-bold text-sm">Fornix AI Assistant</h3>
+                            <h3 className="font-bold text-sm">FORNIX AI</h3>
                             <p className="text-xs text-orange-100">Study Companion</p>
                         </div>
                     </div>

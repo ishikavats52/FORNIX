@@ -971,6 +971,11 @@ function AMC() {
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-5xl font-extrabold text-blue-900 mb-4">Pricing Plans</h2>
               <p className="text-gray-500 text-lg">Choose the right plan based on your preparation timeline.</p>
+          
+            </div>
+            <div className="text-center mb-12">
+              <p className="text-gray-500 text-lg">We strongly recommend that you review the sample content / free trial before purchasing any plan</p>
+                
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
               {/* Filter plans for this course */}

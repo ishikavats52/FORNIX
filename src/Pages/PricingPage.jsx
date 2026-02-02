@@ -267,7 +267,8 @@ function PricingPage() {
                                             </svg>
                                             <span className="text-gray-700 text-sm">FREE Updates During Validity ⭐</span>
                                         </div>
-                                    )}
+                                    )
+                                    }
                                 </div>
 
                                 {/* Buy Button */}

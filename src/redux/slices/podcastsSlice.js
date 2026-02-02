@@ -6,9 +6,11 @@ export const fetchPodcastSubjects = createAsyncThunk(
   'podcasts/fetchSubjects',
   async (courseId, { rejectWithValue }) => {
     try {
-      const response = await API.post('/podcasts/subjects', {
-        course_id: courseId,
-        media_type: null
+      const response = await API.get('/podcasts/subjects', {
+        params: {
+          course_id: courseId,
+          media_type: null
+        }
       });
       return response.data;
     } catch (error) {
@@ -21,10 +23,12 @@ export const fetchPodcastsBySubject = createAsyncThunk(
   'podcasts/fetchBySubject',
   async ({ courseId, subjectId }, { rejectWithValue }) => {
     try {
-      const response = await API.post('/podcasts/by-subject', {
-        course_id: courseId,
-        subject_id: subjectId,
-        media_type: null
+      const response = await API.get('/podcasts', {
+        params: {
+          course_id: courseId,
+          subject_id: subjectId,
+          media_type: null
+        }
       });
       return response.data;
     } catch (error) {

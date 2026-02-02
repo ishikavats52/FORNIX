@@ -48,45 +48,69 @@ function Dashboard() {
     const rankingsLoading = useSelector(selectRankingsLoading);
 
     const [activeTab, setActiveTab] = useState('courses');
+    const [profilePictureUrl, setProfilePictureUrl] = useState(null);
 
     // Get the display user (prefer profile over auth user)
     const displayUser = userProfile || user;
 
+    // Load profile picture from userProfile or localStorage
     useEffect(() => {
-        let userId = user?.user_id || user?.id || user?.uuid;
+        const userId = user?.user_id || user?.id || user?.uuid;
         if (userId) {
-            dispatch(fetchEnrolledCourses(userId));
+            const localStorageKey = `profile_picture_${userId}`;
+            const savedPicture = userProfile?.profile_picture || localStorage.getItem(localStorageKey);
+            setProfilePictureUrl(savedPicture);
         }
-        const isValidUUID = (id) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-        const DEFAULT_TEST_USER_ID = '0c8a7950-df05-47e2-881f-5116b762ad5e'; // Same ID used in payment fallback
+    }, [user, userProfile]);
 
-        // If userId is numeric or invalid, use the default test user
-        if (userId && !isValidUUID(userId)) {
-            console.warn('Dashboard: Numeric/Invalid ID detected. Fetching data for Default Test User due to dev environment mismatch.');
-            userId = DEFAULT_TEST_USER_ID;
-        }
-
+    useEffect(() => {
+        const userId = user?.user_id || user?.id || user?.uuid;
         if (userId) {
             dispatch(fetchUserDetails(userId));
             dispatch(fetchEnrolledCourses(userId));
-            // Comment out these calls since backend endpoints don't exist
-            // dispatch(fetchUserProgress(userId));
-            // dispatch(fetchStudyMaterials(userId));
-            // dispatch(fetchMCQBank(userId));
-            // dispatch(fetchRankings({ limit: 5, userId }));
+            dispatch(fetchUserProgress(userId));
+            dispatch(fetchStudyMaterials(userId));
+            dispatch(fetchMCQBank(userId));
+            dispatch(fetchRankings());
         }
     }, [dispatch, user]);
 
     const handleLogout = () => {
         dispatch(logoutUser());
-        navigate('/login');
+        navigate('/');
     };
 
     const handleCourseClick = (courseId) => {
-        // Determine path based on course ID or just generic subjects page
-        // Use generic route for standard courses, specialized routes for specific ones if needed
-        // But for now, generic route works for all since we fixed API logic
-        navigate(`/courses/${courseId}/subjects`);
+        navigate(`/courses/${courseId}`);
+    };
+
+    const handleSubjectClick = (subjectId) => {
+        navigate(`/subjects/${subjectId}`);
+    };
+
+    const handleMaterialClick = (materialId) => {
+        navigate(`/materials/${materialId}`);
+    };
+
+    const handleMCQClick = (mcqId) => {
+        navigate(`/mcq/${mcqId}`);
+    };
+
+    if (!user) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-32">
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h2>
+                    <p className="text-gray-600 mb-6">Please log in to view your dashboard.</p>
+                    <button
+                        onClick={() => navigate('/login')}
+                        className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition"
+                    >
+                        Go to Login
+                    </button>
+                </div>
+            </div>
+        );
     }
 
     if (loading && !courses.length) {
@@ -116,11 +140,19 @@ function Dashboard() {
                         <div className="flex flex-col md:flex-row items-center md:items-end -mt-20 md:-mt-16">
                             {/* Avatar */}
                             <div className="relative group">
-                                <div className="w-32 h-32 rounded-full bg-linear-to-br from-orange-400  flex items-center justify-center text-white text-4xl font-bold shadow-2xl border-4 border-white">
-                                    {displayUser?.name || displayUser?.full_name ?
-                                        (displayUser.name || displayUser.full_name).split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-                                        : 'ST'}
-                                </div>
+                                {profilePictureUrl ? (
+                                    <img
+                                        src={profilePictureUrl}
+                                        alt="Profile"
+                                        className="w-32 h-32 rounded-full object-cover shadow-2xl border-4 border-white"
+                                    />
+                                ) : (
+                                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center text-white text-4xl font-bold shadow-2xl border-4 border-white">
+                                        {displayUser?.name || displayUser?.full_name ?
+                                            (displayUser.name || displayUser.full_name).split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                                            : 'ST'}
+                                    </div>
+                                )}
                                 <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-white"></div>
                             </div>
 
