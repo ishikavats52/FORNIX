@@ -39,12 +39,12 @@ function ContactUs() {
           <div className="space-y-6">
             <div className="bg-white/20 backdrop-blur-md shadow-xl rounded-2xl p-6 border border-white/30">
               <h3 className="text-xl font-semibold mb-2 text-white">Email Support</h3>
-              <p className="text-white/90">support@fornix.com</p>
+              <p className="text-white/90">info@fornixacademy.com</p>
             </div>
 
             <div className="bg-white/20 backdrop-blur-md shadow-xl rounded-2xl p-6 border border-white/30">
-              <h3 className="text-xl font-semibold mb-2 text-white">Call Us</h3>
-              <p className="text-white/90">+91 1111111</p>
+              <h3 className="text-xl font-semibold mb-2 text-white">Call  Us</h3>
+              <p className="text-white/90">996552448787</p>
             </div>
 
             <div className="bg-white/20 backdrop-blur-md shadow-xl rounded-2xl p-6 border border-white/30">

@@ -9,7 +9,7 @@ function Footer() {
 
           {/* About Section */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-orange-500 mb-4">Fornix Academy</h3>
+            <h3 className="text-2xl font-bold text-orange-500 mb-4">FORNIX Academy</h3>
             <p className="text-gray-300 leading-relaxed">
               Smart Preparation for Global Medical Exams
             </p>
