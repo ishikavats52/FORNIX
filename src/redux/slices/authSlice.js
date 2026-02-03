@@ -124,6 +124,43 @@ export const googleLogin = createAsyncThunk(
   }
 );
 
+// Password Reset Thunks
+export const requestPasswordReset = createAsyncThunk(
+  'auth/requestPasswordReset',
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await API.post('/auth/password-reset/request', { email });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to send OTP');
+    }
+  }
+);
+
+export const verifyPasswordResetOTP = createAsyncThunk(
+  'auth/verifyPasswordResetOTP',
+  async ({ email, otp }, { rejectWithValue }) => {
+    try {
+      const response = await API.post('/auth/password-reset/verify', { email, otp });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Invalid OTP');
+    }
+  }
+);
+
+export const updatePassword = createAsyncThunk(
+  'auth/updatePassword',
+  async ({ email, otp, new_password }, { rejectWithValue }) => {
+    try {
+      const response = await API.post('/auth/password-reset/update', { email, otp, new_password });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to update password');
+    }
+  }
+);
+
 
 // Initial state
 const initialState = {

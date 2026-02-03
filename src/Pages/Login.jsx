@@ -183,6 +183,12 @@ function Login() {
                 {errors.password}
               </p>
             )}
+
+            <div className="flex justify-end mt-2">
+              <Link to="/forgot-password" className="text-sm text-orange-500 hover:text-orange-600 font-medium">
+                Forgot Password?
+              </Link>
+            </div>
           </div>
 
           {/* API Error */}
