@@ -9,6 +9,7 @@ import {
     selectQuizError,
 } from '../redux/slices/quizSlice';
 import { selectUser } from '../redux/slices/authSlice';
+import { selectUserProfile, fetchUserDetails } from '../redux/slices/userSlice';
 import { selectCurrentMockTest, submitMockTest } from '../redux/slices/mockTestsSlice';
 import { showNotification } from '../redux/slices/uiSlice';
 import { trackQuizAttempt } from '../utils/accessControl';
@@ -20,6 +21,19 @@ function QuizTakingPage() {
     const location = useLocation();
     const { quizId } = useParams();
     const user = useSelector(selectUser);
+    const userProfile = useSelector(selectUserProfile);
+
+    // Use profile if available, otherwise fall back to auth user
+    const activeUser = userProfile || user;
+
+    // Fetch full user profile if we only have basic auth info
+    useEffect(() => {
+        if (user?.user_id && !userProfile) {
+            dispatch(fetchUserDetails(user.user_id));
+        } else if (user?.id && !userProfile) {
+            dispatch(fetchUserDetails(user.id));
+        }
+    }, [dispatch, user, userProfile]);
 
     const currentQuiz = useSelector(selectCurrentQuiz);
     const currentMockTest = useSelector(selectCurrentMockTest);
@@ -188,8 +202,8 @@ function QuizTakingPage() {
                 localStorage.setItem('quiz_results_direct', JSON.stringify(quizResults));
 
                 // Track quiz attempt for free users
-                trackQuizAttempt(user, 'direct', quiz?.chapter_id);
-                console.log('[QuizTakingPage] Tracked quiz attempt for user:', user?.id || user?.user_id);
+                trackQuizAttempt(activeUser, 'direct', quiz?.chapter_id);
+                console.log('[QuizTakingPage] Tracked quiz attempt for user:', activeUser?.id || activeUser?.user_id);
 
                 dispatch(showNotification({
                     type: 'success',
@@ -264,8 +278,8 @@ function QuizTakingPage() {
                 const result = await dispatch(submitQuiz(submissionData)).unwrap();
 
                 // Track quiz attempt for free users
-                trackQuizAttempt(user, result.quiz_id || attemptId, quiz?.chapter_id);
-                console.log('[QuizTakingPage] Tracked quiz attempt for user:', user?.id || user?.user_id);
+                trackQuizAttempt(activeUser, result.quiz_id || attemptId, quiz?.chapter_id);
+                console.log('[QuizTakingPage] Tracked quiz attempt for user:', activeUser?.id || activeUser?.user_id);
 
                 dispatch(showNotification({
                     type: 'success',

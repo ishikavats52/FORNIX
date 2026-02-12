@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserProfile, selectUser } from './redux/slices/authSlice';
 
+import ScrollToTop from './Components/ScrollToTop.jsx';
 import Home from '../src/Pages/Home.jsx'
 import About from '../src/Pages/About.jsx';
 import ContactUs from '../src/Pages/ContactUs.jsx';
@@ -37,6 +38,9 @@ import AMCSubjectPage from '../src/Pages/AMCSubjectPage.jsx';
 import SmartTrackingPage from '../src/Pages/SmartTrackingPage.jsx';
 import ChatWidget from './Components/ChatWidget.jsx';
 import EnrollmentPage from '../src/Pages/EnrollmentPage.jsx';
+import TermsAndConditions from '../src/Pages/TermsAndConditions.jsx';
+import PrivacyPolicies from '../src/Pages/PrivacyPolicies.jsx';
+import RefundPolicy from '../src/Pages/RefundPolicy.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -52,6 +56,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <NotificationContainer />
       <ChatWidget />
       <Headers />
@@ -62,6 +67,9 @@ function App() {
         <Route path="/contact" element={<ContactUs />} />
         {/* <Route path="/courses" element={<Courses />} /> */}
         {/* <Route path="/pricingPage" element={<PricingPage />} /> */}
+        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicies />} />
+        <Route path="/refund-policy" element={<RefundPolicy />} />
         <Route path="/enroll/:courseId" element={
           <ProtectedRoute>
             <EnrollmentPage />

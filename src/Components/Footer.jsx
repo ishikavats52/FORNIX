@@ -40,9 +40,14 @@ function Footer() {
               </li>
             </ul>
           </div>
-
+          {/* terms and conditions */}
+          <div className=' space-y-4'>
+            <h3 className='text-lg font-bold text-white mb-4' > <Link to="/terms-and-conditions" className='hover:text-orange-500 transition'>Terms & Conditions</Link></h3>
+            <h3 className='text-lg font-bold text-white mb-4' > <Link to="/privacy-policy" className='hover:text-orange-500 transition'>Privacy Policy</Link></h3>
+            <h3 className='text-lg font-bold text-white mb-4' > <Link to="/refund-policy" className='hover:text-orange-500 transition'>Refund & Cancellation Policy</Link></h3>
+          </div>
           {/* Contact & Social Section */}
-          <div className="space-y-4">
+          <div className="space-y-4 ">
             <h4 className="text-lg font-bold text-orange-500 mb-4">Connect With Us</h4>
             <div className="space-y-3">
               <a
@@ -57,7 +62,7 @@ function Footer() {
               </a>
 
               {/* Social Media Icons */}
-              <div className="flex gap-4 pt-2">
+              <div className="flex gap-4 ">
                 <a
                   href="https://wa.me/996552448787"
                   target="_blank"

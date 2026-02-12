@@ -7,10 +7,11 @@ import {
   selectQuizLoading,
 } from "../redux/slices/quizSlice";
 import { selectUser } from "../redux/slices/authSlice";
+import { selectUserProfile, fetchUserDetails } from "../redux/slices/userSlice";
 import { showNotification } from "../redux/slices/uiSlice";
 import UpgradePrompt from "../Components/UpgradePrompt";
 import QuizAttemptsCounter from "../Components/QuizAttemptsCounter";
-import { canAttemptQuiz, getRemainingQuizAttempts, trackQuizAttempt } from "../utils/accessControl";
+import { canAttemptQuiz, getRemainingQuizAttempts, trackQuizAttempt, isActiveSubscriber } from "../utils/accessControl";
 
 function QuizStart() {
   const [searchParams] = useSearchParams();
@@ -18,7 +19,20 @@ function QuizStart() {
   const navigate = useNavigate();
 
   const user = useSelector(selectUser);
+  const userProfile = useSelector(selectUserProfile);
   const loading = useSelector(selectQuizLoading);
+
+  // Use profile if available, otherwise fall back to auth user
+  const activeUser = userProfile || user;
+
+  // Fetch full user profile if we only have basic auth info
+  React.useEffect(() => {
+    if (user?.user_id && !userProfile) {
+      dispatch(fetchUserDetails(user.user_id));
+    } else if (user?.id && !userProfile) {
+      dispatch(fetchUserDetails(user.id));
+    }
+  }, [dispatch, user, userProfile]);
 
   const chapterId = searchParams.get("chapterId");
   const topicIds = searchParams.get("topicIds")?.split(",");
@@ -36,7 +50,7 @@ function QuizStart() {
   const courseId = null; // Could be passed via searchParams if needed
 
   const handleStartQuiz = async () => {
-    if (!user) {
+    if (!activeUser) {
       dispatch(
         showNotification({
           type: "warning",
@@ -48,7 +62,7 @@ function QuizStart() {
     }
 
     // Check quiz access for non-mock tests
-    if (!mockTestId && !canAttemptQuiz(user, courseId)) {
+    if (!mockTestId && !canAttemptQuiz(activeUser, courseId)) {
       setShowUpgradePrompt(true);
       return;
     }
@@ -203,10 +217,10 @@ function QuizStart() {
         </div>
 
         {/* Quiz Attempts Counter for Free Users */}
-        {user && !user.has_active_subscription && (
+        {activeUser && !isActiveSubscriber(activeUser) && (
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
             <QuizAttemptsCounter
-              remaining={getRemainingQuizAttempts(user)}
+              remaining={getRemainingQuizAttempts(activeUser)}
               total={2}
             />
           </div>
@@ -218,7 +232,7 @@ function QuizStart() {
         isOpen={showUpgradePrompt}
         onClose={() => setShowUpgradePrompt(false)}
         feature="quiz"
-        user={user}
+        user={activeUser}
         courseId={courseId}
       />
     </div>

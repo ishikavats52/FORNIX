@@ -3,13 +3,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchMixedQuiz, selectQuizLoading } from '../redux/slices/quizSlice';
 import { selectUser } from '../redux/slices/authSlice';
+import { selectUserProfile, fetchUserDetails } from '../redux/slices/userSlice';
 import { canAttemptQuiz } from '../utils/accessControl';
 
 const MixedQuizModal = ({ isOpen, onClose, chapterId, chapterName, courseId = null, onAccessDenied = null }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector(selectUser);
+    const userProfile = useSelector(selectUserProfile);
     const loading = useSelector(selectQuizLoading);
+
+    // Use profile if available, otherwise fall back to auth user
+    const activeUser = userProfile || user;
+
+    // Fetch full user profile if we only have basic auth info
+    // Only run this if the modal is open, to save resources
+    React.useEffect(() => {
+        if (isOpen && user?.user_id && !userProfile) {
+            dispatch(fetchUserDetails(user.user_id));
+        } else if (isOpen && user?.id && !userProfile) {
+            dispatch(fetchUserDetails(user.id));
+        }
+    }, [dispatch, user, userProfile, isOpen]);
 
     const [config, setConfig] = useState({
         easy: 5,
@@ -26,13 +41,13 @@ const MixedQuizModal = ({ isOpen, onClose, chapterId, chapterName, courseId = nu
     };
 
     const handleStart = async () => {
-        if (!user) {
+        if (!activeUser) {
             alert('Please login first');
             return;
         }
 
         // Check quiz access
-        if (!canAttemptQuiz(user, courseId)) {
+        if (!canAttemptQuiz(activeUser, courseId)) {
             if (onAccessDenied) {
                 onAccessDenied();
             }
@@ -42,7 +57,7 @@ const MixedQuizModal = ({ isOpen, onClose, chapterId, chapterName, courseId = nu
 
         const payload = {
             chapter_id: chapterId,
-            user_id: user.user_id || user.id,
+            user_id: activeUser.user_id || activeUser.id,
             ...config
         };
 

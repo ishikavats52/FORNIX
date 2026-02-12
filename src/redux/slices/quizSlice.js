@@ -190,7 +190,8 @@ export const fetchChapterQuiz = createAsyncThunk(
         user_id
       };
       
-      const response = await API.post('/quiz/chapter-quizzes', dataToSend);
+
+      const response = await API.post(`/chapter-quizzes`, dataToSend);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Failed to fetch chapter quiz');

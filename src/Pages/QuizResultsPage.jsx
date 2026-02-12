@@ -51,8 +51,8 @@ function QuizResultsPage() {
     console.log("testid from url", testIdFromUrl)
 
     console.log('attemptiddddddd', attemptIdFromState)
-    console.log('quijjjjj',quizId)
-    
+    console.log('quijjjjj', quizId)
+
     useEffect(() => {
         if (quizId === 'direct') {
             // Load results from localStorage for direct quizzes
@@ -71,7 +71,7 @@ function QuizResultsPage() {
             const userId = user?.user_id || user?.id || user?.uuid;
             if (userId) {
                 dispatch(fetchMockTestResult({
-                   
+
                     attempt_id: testIdFromUrl,
                     user_id: userId
                 }));
@@ -157,19 +157,19 @@ function QuizResultsPage() {
 
     // Handle both 'review' and 'questions' array formats from different API endpoints
     // Check results.result.questions / details as well
-    console.log('rreeeee',results)
+    console.log('rreeeee', results)
     const reviewQuestions = quizId === "direct" ? results?.questions : results?.result?.details || results?.details
-   
 
-//     const reviewQuestions = Array.isArray(results?.review)
-//   ? results.review
-//   : Array.isArray(results?.questions)
-//   ? results.questions
-//   : Array.isArray(results?.result?.details)
-//   ? results.result.details
-//   : Array.isArray(results?.details)
-//   ? results.details
-//   : [];
+
+    //     const reviewQuestions = Array.isArray(results?.review)
+    //   ? results.review
+    //   : Array.isArray(results?.questions)
+    //   ? results.questions
+    //   : Array.isArray(results?.result?.details)
+    //   ? results.result.details
+    //   : Array.isArray(results?.details)
+    //   ? results.details
+    //   : [];
 
 
     return (
@@ -190,30 +190,30 @@ function QuizResultsPage() {
 
                     <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
                         <div className="bg-blue-50 rounded-lg p-4">
-                            <div className="text-3xl font-bold text-blue-600">{quizId === "direct" ? results.total_questions :results?.result.analysis.total_questions}</div>
+                            <div className="text-3xl font-bold text-blue-600">{quizId === "direct" ? results.total_questions : results?.result.analysis.total_questions}</div>
                             <div className="text-sm text-gray-600 mt-1">Total Questions</div>
                         </div>
                         <div className="bg-green-50 rounded-lg p-4">
-                            <div className="text-3xl font-bold text-green-600">{quizId ==="direct" ?results.correct_answers : results?.result.analysis.correct_answers}</div>
+                            <div className="text-3xl font-bold text-green-600">{quizId === "direct" ? results.correct_answers : results?.result.analysis.correct_answers}</div>
                             <div className="text-sm text-gray-600 mt-1">Correct</div>
                         </div>
                         <div className="bg-red-50 rounded-lg p-4">
                             <div className="text-3xl font-bold text-red-600">
-                             
-                                 {quizId === "direct" ? results.incorrect_answers: results?.result.analysis.wrong_answers}
+
+                                {quizId === "direct" ? results.incorrect_answers : results?.result.analysis.wrong_answers}
+
+                                <div className="text-sm text-gray-600 mt-1">Incorrect</div>
                             </div>
-                           
-
-                            <div className="text-sm text-gray-600 mt-1">Incorrect</div>
-
-
                         </div>
                     </div>
-
+                    <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+                    </div>
                     {results.time_taken && (
                         <div className="mt-6 text-gray-600">
                             <span className="font-semibold">Time Taken:</span> {results?.result.time_taken}
                         </div>
+
+
                     )}
                 </div>
 

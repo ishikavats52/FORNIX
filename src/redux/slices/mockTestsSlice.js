@@ -53,7 +53,7 @@ export const startMockTest = createAsyncThunk(
       // Try to get user_id from user object - could be 'id', 'user_id', or 'uuid'
       const user_id = state.auth.user?.user_id || state.auth.user?.id || state.auth.user?.uuid;
       
-      const response = await API.post(`/mock-tests/start/${testId}`, user_id ? { user_id } : {});
+      const response = await API.post(`/mobile/mock-tests/${testId}/start`, user_id ? { user_id } : {});
       console.log('ishika',response.data);  
       return response.data; 
     } catch (error) {

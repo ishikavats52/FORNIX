@@ -78,7 +78,9 @@ function ContactUs() {
                 placeholder="Your Message"
                 className="w-full bg-white/90 backdrop-blur-sm border border-white/50 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder-gray-600"
               ></textarea>
-
+              <div className='text-white/90 text-sm'>
+                <p> By submitting this form, you hereby grant us permission to contact you via SMS, WhatsApp, RCS, Email, and any other channel.</p>
+              </div>
               <button
                 type="submit"
                 className="w-full bg-orange-500 text-white py-3 rounded-full font-semibold hover:bg-orange-600 transition shadow-lg hover:shadow-xl"

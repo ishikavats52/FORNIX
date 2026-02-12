@@ -1,4 +1,5 @@
 import React from 'react';
+import { isActiveSubscriber } from '../utils/accessControl';
 
 /**
  * UpgradePrompt Modal Component
@@ -73,7 +74,7 @@ function UpgradePrompt({ isOpen, onClose, feature = 'default', user, courseId = 
                             <div className="text-center">
                                 <p className="text-sm text-gray-600 mb-1">Current Plan</p>
                                 <p className="text-lg font-bold text-gray-900">
-                                    {user.has_active_subscription ? 'Premium Account' : 'Free Account'}
+                                    {isActiveSubscriber(user) ? 'Premium Account' : 'Free Account'}
                                 </p>
                             </div>
                         </div>

@@ -35,6 +35,35 @@ const saveQuizAttemptsData = (userId, data) => {
 };
 
 /**
+ * Check if user has a valid subscription
+ * Checks both the flag and the subscriptions array
+ */
+export const isActiveSubscriber = (user) => {
+  if (!user) return false;
+  
+  if (user.has_active_subscription) return true;
+  
+  // Check student_type
+  if (user.student_type === 'paid' || user.student_type === 'premium') return true;
+
+  // Check role
+  if (user.role === 'admin' || user.role === 'moderator') return true;
+  
+  // Also check subscriptions array as fallback
+  if (user.subscriptions && Array.isArray(user.subscriptions) && user.subscriptions.length > 0) {
+    const hasActive = user.subscriptions.some(sub => sub.is_active || sub.status === 'active');
+    if (hasActive) return true;
+    
+    // If we have subscriptions but none explicitly marked active, 
+    // we might still want to allow access if "subscriptions" exists and is not empty
+    // assuming the backend only sends valid subscriptions.
+    if (user.subscriptions.length > 0) return true;
+  }
+  
+  return false;
+};
+
+/**
  * Check if user can attempt a quiz
  * Free users (no active subscription): limited to 2 total attempts
  * Paid users (with active subscription): unlimited attempts in their subscribed course
@@ -48,7 +77,7 @@ export const canAttemptQuiz = (user, courseId = null) => {
   }
   
   // Paid users with active subscription can attempt unlimited quizzes in their course
-  if (user.has_active_subscription) {
+  if (isActiveSubscriber(user)) {
     console.log('[canAttemptQuiz] User has active subscription');
     // If courseId is provided, check if it's their subscribed course
     if (courseId) {
@@ -79,7 +108,7 @@ export const canAttemptQuiz = (user, courseId = null) => {
 export const getRemainingQuizAttempts = (user) => {
   if (!user) return 0;
   
-  if (user.has_active_subscription) {
+  if (isActiveSubscriber(user)) {
     return 'unlimited';
   }
   
@@ -93,7 +122,7 @@ export const getRemainingQuizAttempts = (user) => {
  */
 export const trackQuizAttempt = (user, quizId, chapterId = null) => {
   // Only track for free users (no active subscription)
-  if (!user || user.has_active_subscription) return;
+  if (!user || isActiveSubscriber(user)) return;
   
   const userId = user.id || user.user_id;
   const attemptsData = getQuizAttemptsData(userId);
@@ -118,7 +147,7 @@ export const trackQuizAttempt = (user, quizId, chapterId = null) => {
 export const hasExceededQuizLimit = (user) => {
   if (!user) return true;
   
-  if (user.has_active_subscription) {
+  if (isActiveSubscriber(user)) {
     return false;
   }
   

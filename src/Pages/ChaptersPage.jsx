@@ -11,6 +11,7 @@ import {
     selectChaptersLoading,
 } from '../redux/slices/chaptersSlice';
 import { selectUser } from '../redux/slices/authSlice';
+import { selectUserProfile, fetchUserDetails } from '../redux/slices/userSlice';
 import PDFViewerModal from '../Components/PDFViewerModal';
 import MixedQuizModal from '../Components/MixedQuizModal';
 import UpgradePrompt from '../Components/UpgradePrompt';
@@ -29,6 +30,19 @@ function ChaptersPage() {
     const chapters = useSelector(selectChapters);
     const loading = useSelector(selectChaptersLoading);
     const user = useSelector(selectUser);
+    const userProfile = useSelector(selectUserProfile);
+
+    // Use profile if available, otherwise fall back to auth user
+    const activeUser = userProfile || user;
+
+    // Fetch full user profile if we only have basic auth info
+    useEffect(() => {
+        if (user?.user_id && !userProfile) {
+            dispatch(fetchUserDetails(user.user_id));
+        } else if (user?.id && !userProfile) {
+            dispatch(fetchUserDetails(user.id));
+        }
+    }, [dispatch, user, userProfile]);
 
     const [activeTab, setActiveTab] = useState('notes'); // 'notes' or 'quizzes'
     const [expandedChapters, setExpandedChapters] = useState({});
@@ -71,14 +85,14 @@ function ChaptersPage() {
         Object.keys(expandedChapters).forEach(chapterId => {
             if (expandedChapters[chapterId]) {
                 if (activeTab === 'notes') {
-                    const noteType = getNoteType(user, courseId);
+                    const noteType = getNoteType(activeUser, courseId);
                     dispatch(fetchChapterNotes({ courseId, chapterId, noteType }));
                 } else {
                     dispatch(fetchTopicsByChapter(chapterId));
                 }
             }
         });
-    }, [activeTab, dispatch, courseId]);
+    }, [activeTab, dispatch, courseId, activeUser]);
 
     const handleOpenPdf = (note) => {
         setSelectedPdf({ url: note.file_url, title: note.title });
@@ -88,7 +102,7 @@ function ChaptersPage() {
     // Check quiz access before navigation
     const handleQuizNavigation = (path) => {
         // Check if user can attempt quiz
-        if (!canAttemptQuiz(user, courseId)) {
+        if (!canAttemptQuiz(activeUser, courseId)) {
             setShowUpgradePrompt(true);
             return false;
         }
@@ -116,10 +130,10 @@ function ChaptersPage() {
                     </div>
 
                     {/* Quiz Attempts Counter for Free Users */}
-                    {user && !user.has_active_subscription && (
+                    {activeUser && !activeUser.has_active_subscription && (
                         <div className="md:w-80">
                             <QuizAttemptsCounter
-                                remaining={getRemainingQuizAttempts(user)}
+                                remaining={getRemainingQuizAttempts(activeUser)}
                                 total={2}
                             />
                         </div>
@@ -191,7 +205,7 @@ function ChaptersPage() {
                 isOpen={showUpgradePrompt}
                 onClose={() => setShowUpgradePrompt(false)}
                 feature="quiz"
-                user={user}
+                user={activeUser}
                 courseId={courseId}
             />
         </div>
