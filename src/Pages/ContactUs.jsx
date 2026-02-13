@@ -73,6 +73,12 @@ function ContactUs() {
                 className="w-full bg-white/90 backdrop-blur-sm border border-white/50 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder-gray-600"
               />
 
+              <input
+                type="tel"
+                placeholder="Your Phone Number"
+                className="w-full bg-white/90 backdrop-blur-sm border border-white/50 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder-gray-600"
+              />
+
               <textarea
                 rows="4"
                 placeholder="Your Message"
