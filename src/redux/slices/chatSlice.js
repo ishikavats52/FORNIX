@@ -8,8 +8,8 @@ export const sendMessageToAI = createAsyncThunk(
     try {
       const response = await API.post('/chat/send', {
         user_id: userId,
-        course_name: courseName || 'General',
-        query: query,
+        course_name: courseName,
+        query: "Please provide a detailed and comprehensive answer to the following question, covering all relevant aspects: " + query,
         session_id: sessionId || null 
       });
       return response.data;

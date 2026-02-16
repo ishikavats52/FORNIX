@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import {
     toggleChat,
     sendMessageToAI,
@@ -18,6 +19,7 @@ import { selectUser } from '../redux/slices/authSlice';
 
 const ChatWidget = () => {
     const dispatch = useDispatch();
+    const location = useLocation();
     const messages = useSelector(selectChatMessages);
     const loading = useSelector(selectChatLoading);
     const sessionId = useSelector(selectChatSessionId);
@@ -42,16 +44,53 @@ const ChatWidget = () => {
         { value: 'PLAB1', label: '🇬🇧 PLAB1' },
     ];
 
+    // Helper to detect course from query
+    const detectCourseFromQuery = (text) => {
+        const lowerText = text.toLowerCase();
+        if (lowerText.includes('amc') || lowerText.includes('australian medical council')) return 'AMC';
+        if (lowerText.includes('neet ug') || lowerText.includes('undergraduate')) return 'NEET UG';
+        if (lowerText.includes('neet pg') || lowerText.includes('postgraduate')) return 'NEET PG';
+        if (lowerText.includes('fmge') || lowerText.includes('foreign medical')) return 'FMGE';
+        if (lowerText.includes('plab') || lowerText.includes('plab1') || lowerText.includes('uk medical')) return 'PLAB1';
+        return null;
+    };
+
+
+
+    /*// Disable automatic fetching of old chats
     useEffect(() => {
         const userId = user?.user_id || user?.id;
         if (isOpen && userId) {
             dispatch(fetchChatSessions(userId));
         }
-    }, [isOpen, user, dispatch]);
+    }, [isOpen, user, dispatch]);*/
 
-    // Auto-detect course from URL on mount
+    /*// Disable auto-resume of latest session
     useEffect(() => {
-        const path = window.location.pathname;
+        if (isOpen && sessions.length > 0 && !sessionId) {
+            const latestSession = sessions[0];
+            // Only resume if we haven't explicitly started a new one (checked via !sessionId)
+            // ensuring we don't accidentally switch if the user just clicked "New Chat" 
+            // (Wait, "New Chat" clears sessionId, so this might re-select queries. 
+            // We need to be careful. Ideally only on FIRST open. 
+            // But for now, "Go with the flow" implies resuming.)
+            // Let's assume hitting "New Chat" sets a flag or clears sessions? No.
+            // Dispatching resetSession sets sessionId to null.
+            // If we want to support "New Chat" staying new, we might need a separate flag.
+            // However, based on user request "Why everytime i have to use the course name... just go with the flow",
+            // they prioritized resuming. I will implement auto-resume.
+            dispatch(fetchSessionMessages(latestSession.id));
+            if (latestSession.course_name) {
+                setSelectedCourse(latestSession.course_name);
+            }
+        }
+    }, [isOpen, sessions, sessionId, dispatch]);*/
+
+    // Auto-detect course from URL on change, but prioritize active session
+    useEffect(() => {
+        if (sessionId) return; // Don't change context if in an active session
+
+        const path = location.pathname;
         if (path.includes('/courses/amc')) {
             setSelectedCourse('AMC');
         } else if (path.includes('/courses/neet-ug')) {
@@ -62,8 +101,11 @@ const ChatWidget = () => {
             setSelectedCourse('FMGE');
         } else if (path.includes('/courses/plab1')) {
             setSelectedCourse('PLAB1');
+        } else if (path === '/' || path === '/dashboard') {
+            // Default to General only if completely new
+            setSelectedCourse('General');
         }
-    }, []);
+    }, [location, sessionId]);
 
     const handleSessionClick = (sessionId) => {
         dispatch(fetchSessionMessages(sessionId));
@@ -89,12 +131,30 @@ const ChatWidget = () => {
         e.preventDefault();
         if (!input.trim()) return;
 
+        // Determine course to send
+        let courseToSend = selectedCourse;
+        let sessionToUse = sessionId;
+
+        // Always try to infer from query to allow cross-course questions
+        const detected = detectCourseFromQuery(input);
+        if (detected) {
+            courseToSend = detected;
+            // If thedetected course is different from the current one, switch context
+            if (detected !== selectedCourse) {
+                setSelectedCourse(detected);
+                // If we switch context, it's safer to start a new session for the API 
+                // to avoid "wrong session context" errors from backend.
+                // Redux will keep the message history visible, so it feels seamless to the user.
+                sessionToUse = null;
+            }
+        }
+
         dispatch(addUserMessage(input));
         dispatch(sendMessageToAI({
             userId: user?.user_id || user?.id || 'guest',
             query: input,
-            courseName: selectedCourse, // Use selected course instead of URL detection
-            sessionId: sessionId
+            courseName: courseToSend,
+            sessionId: sessionToUse
         }));
         setInput('');
     };

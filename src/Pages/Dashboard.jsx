@@ -26,6 +26,8 @@ import {
     selectUserRank,
     selectRankingsLoading,
 } from '../redux/slices/rankingsSlice';
+import { updateUserProfile } from '../redux/slices/userSlice';
+import { showNotification } from '../redux/slices/uiSlice';
 import Leaderboard from '../Components/Leaderboard';
 
 function Dashboard() {
@@ -49,6 +51,87 @@ function Dashboard() {
 
     const [activeTab, setActiveTab] = useState('courses');
     const [profilePictureUrl, setProfilePictureUrl] = useState(null);
+    const [uploadingPicture, setUploadingPicture] = useState(false);
+
+    // Image compression - reduced size for smaller base64 strings
+    const compressImage = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const maxSize = 150; // Reduced from 300 to create smaller base64
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxSize) {
+                            height = (height * maxSize) / width;
+                            width = maxSize;
+                        }
+                    } else {
+                        if (height > maxSize) {
+                            width = (width * maxSize) / height;
+                            height = maxSize;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                    const compressed = canvas.toDataURL('image/jpeg', 0.6); // Reduced quality from 0.8 to 0.6
+                    console.log('Compressed image size:', compressed.length, 'characters');
+                    resolve(compressed);
+                };
+                img.onerror = reject;
+            };
+            reader.onerror = reject;
+        });
+    };
+
+    const handleProfilePictureChange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            dispatch(showNotification({ type: 'error', message: 'Please select an image file' }));
+            return;
+        }
+
+        if (file.size > 2 * 1024 * 1024) {
+            dispatch(showNotification({ type: 'error', message: 'Image must be less than 2MB' }));
+            return;
+        }
+
+        try {
+            setUploadingPicture(true);
+            const compressed = await compressImage(file);
+
+            // Immediately upload
+            const userId = user?.user_id || user?.id || user?.uuid;
+            const updateData = {
+                id: userId,
+                profile_picture: compressed
+            };
+
+            await dispatch(updateUserProfile(updateData)).unwrap();
+
+            // Update local state immediately for responsiveness
+            setProfilePictureUrl(compressed);
+
+            // Refetch to ensure consistency
+            dispatch(fetchUserDetails(userId));
+
+            setUploadingPicture(false);
+            dispatch(showNotification({ type: 'success', message: 'Profile picture updated!' }));
+        } catch (error) {
+            setUploadingPicture(false);
+            dispatch(showNotification({ type: 'error', message: 'Failed to update profile picture' }));
+        }
+    };
 
     // Get the display user (prefer profile over auth user)
     const displayUser = userProfile || user;
@@ -153,7 +236,31 @@ function Dashboard() {
                                             : 'ST'}
                                     </div>
                                 )}
-                                <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-white"></div>
+
+                                {/* Upload Button */}
+                                <input
+                                    type="file"
+                                    id="dashboard-profile-picture-input"
+                                    accept="image/*"
+                                    onChange={handleProfilePictureChange}
+                                    className="hidden"
+                                />
+                                <label
+                                    htmlFor="dashboard-profile-picture-input"
+                                    className="absolute bottom-2 right-2 bg-orange-500 hover:bg-orange-600 rounded-full p-2 shadow-lg cursor-pointer transition transform hover:scale-110 border-2 border-white z-10"
+                                >
+                                    {uploadingPicture ? (
+                                        <svg className="w-4 h-4 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    ) : (
+                                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    )}
+                                </label>
                             </div>
 
                             {/* User Info */}
@@ -163,12 +270,21 @@ function Dashboard() {
                                 </h1>
                                 <p className="text-gray-600 mt-1">{displayUser?.email || 'student@fornix.com'}</p>
                                 <div className="flex items-center justify-center md:justify-start gap-3 mt-3">
-                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                                        <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                        </svg>
-                                        Active Student
-                                    </span>
+                                    {userProfile?.has_active_subscription ? (
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                            </svg>
+                                            Active Student
+                                        </span>
+                                    ) : (
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-600">
+                                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                            </svg>
+                                            Free User
+                                        </span>
+                                    )}
                                     {activePlan && (
                                         <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 ">
                                             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

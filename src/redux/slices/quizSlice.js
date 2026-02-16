@@ -312,7 +312,7 @@ export const resetAMCQuiz = createAsyncThunk(
         user_id
       };
       
-      const response = await API.post('/amc-quiz/reset', dataToSend);
+      const response = await API.post('/quiz/reset', { ...dataToSend, scope: 'AMC' });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Failed to reset AMC quiz');
