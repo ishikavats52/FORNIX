@@ -126,8 +126,8 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 pt-24 sm:pt-32">
-      <div className="bg-white shadow-lg rounded-3xl p-6 sm:p-8 lg:p-10 w-full max-w-sm sm:max-w-md">
+    <div className="flex items-center justify-center bg-gray-50 px-4 sm:px-6 pt-24 sm:pt-32 pb-20">
+      <div className="bg-white shadow-lg rounded-3xl p-6 sm:p-8 lg:p-10 w-full max-w-sm sm:max-w-md min-h-[400px] ">
 
         {/* Heading */}
         <h2 className="text-3xl font-bold text-center mb-2">
