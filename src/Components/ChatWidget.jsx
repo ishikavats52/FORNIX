@@ -13,7 +13,9 @@ import {
     selectChatLoading,
     selectChatSessionId,
     selectChatIsOpen,
-    selectChatSessions
+    selectChatSessions,
+    selectCourseContext,
+    setCourseContext
 } from '../redux/slices/chatSlice';
 import { selectUser } from '../redux/slices/authSlice';
 
@@ -55,57 +57,69 @@ const ChatWidget = () => {
         return null;
     };
 
-
-
-    /*// Disable automatic fetching of old chats
     useEffect(() => {
         const userId = user?.user_id || user?.id;
         if (isOpen && userId) {
             dispatch(fetchChatSessions(userId));
         }
-    }, [isOpen, user, dispatch]);*/
+    }, [isOpen, user, dispatch]);
 
-    /*// Disable auto-resume of latest session
+    // Load session from storage on mount
     useEffect(() => {
-        if (isOpen && sessions.length > 0 && !sessionId) {
-            const latestSession = sessions[0];
-            // Only resume if we haven't explicitly started a new one (checked via !sessionId)
-            // ensuring we don't accidentally switch if the user just clicked "New Chat" 
-            // (Wait, "New Chat" clears sessionId, so this might re-select queries. 
-            // We need to be careful. Ideally only on FIRST open. 
-            // But for now, "Go with the flow" implies resuming.)
-            // Let's assume hitting "New Chat" sets a flag or clears sessions? No.
-            // Dispatching resetSession sets sessionId to null.
-            // If we want to support "New Chat" staying new, we might need a separate flag.
-            // However, based on user request "Why everytime i have to use the course name... just go with the flow",
-            // they prioritized resuming. I will implement auto-resume.
-            dispatch(fetchSessionMessages(latestSession.id));
-            if (latestSession.course_name) {
-                setSelectedCourse(latestSession.course_name);
-            }
+        const savedSession = localStorage.getItem('chatSessionId');
+        const savedCourse = localStorage.getItem('chatCourseContext');
+
+        if (savedSession) {
+            dispatch(restoreSession(savedSession));
+            dispatch(fetchSessionMessages(savedSession));
         }
-    }, [isOpen, sessions, sessionId, dispatch]);*/
+
+        if (savedCourse) {
+            dispatch(setCourseContext(savedCourse));
+        }
+    }, [dispatch]);
 
     // Auto-detect course from URL on change, but prioritize active session
     useEffect(() => {
         if (sessionId) return; // Don't change context if in an active session
 
         const path = location.pathname;
+        let newCourse = null;
+
         if (path.includes('/courses/amc')) {
-            setSelectedCourse('AMC');
+            newCourse = 'AMC';
         } else if (path.includes('/courses/neet-ug')) {
-            setSelectedCourse('NEET UG');
+            newCourse = 'NEET UG';
         } else if (path.includes('/courses/neet-pg')) {
-            setSelectedCourse('NEET PG');
+            newCourse = 'NEET PG';
         } else if (path.includes('/courses/fmge')) {
-            setSelectedCourse('FMGE');
+            newCourse = 'FMGE';
         } else if (path.includes('/courses/plab1')) {
-            setSelectedCourse('PLAB1');
+            newCourse = 'PLAB1';
         } else if (path === '/' || path === '/dashboard') {
-            // Default to General only if completely new
-            setSelectedCourse('General');
+            // Reset to General only on main pages, keep context otherwise if navigating deeply?
+            // Actually, safer to default to General if not in a course route to avoid confusion
+            newCourse = 'General'; // Set newCourse to General
         }
-    }, [location, sessionId]);
+
+        if (newCourse && newCourse !== selectedCourse) {
+            dispatch(setCourseContext(newCourse));
+        }
+    }, [location.pathname, sessionId, selectedCourse, dispatch]);
+
+    // Save context and session to localStorage
+    useEffect(() => {
+        if (sessionId) {
+            localStorage.setItem('chatSessionId', sessionId);
+        } else {
+            localStorage.removeItem('chatSessionId'); // Clear if sessionId becomes null
+        }
+        if (selectedCourse) {
+            localStorage.setItem('chatCourseContext', selectedCourse);
+        } else {
+            localStorage.removeItem('chatCourseContext'); // Clear if selectedCourse becomes null
+        }
+    }, [sessionId, selectedCourse]);
 
     const handleSessionClick = (sessionId) => {
         dispatch(fetchSessionMessages(sessionId));
@@ -114,6 +128,8 @@ const ChatWidget = () => {
 
     const handleNewChat = () => {
         dispatch(resetSession());
+        localStorage.removeItem('chatSessionId');
+        localStorage.removeItem('chatCourseContext');
         setShowHistory(false);
     };
 
@@ -133,19 +149,16 @@ const ChatWidget = () => {
 
         // Determine course to send
         let courseToSend = selectedCourse;
-        let sessionToUse = sessionId;
 
         // Always try to infer from query to allow cross-course questions
         const detected = detectCourseFromQuery(input);
         if (detected) {
             courseToSend = detected;
-            // If thedetected course is different from the current one, switch context
+            // Update state so UI reflects the new context if needed, or keep it as is?
+            // User might be confused if the UI suddenly changes "General" to "AMC" just by asking one question
+            // But it's helpful feedback. Let's update it for consistency.
             if (detected !== selectedCourse) {
                 setSelectedCourse(detected);
-                // If we switch context, it's safer to start a new session for the API 
-                // to avoid "wrong session context" errors from backend.
-                // Redux will keep the message history visible, so it feels seamless to the user.
-                sessionToUse = null;
             }
         }
 
@@ -154,7 +167,7 @@ const ChatWidget = () => {
             userId: user?.user_id || user?.id || 'guest',
             query: input,
             courseName: courseToSend,
-            sessionId: sessionToUse
+            sessionId: sessionId
         }));
         setInput('');
     };
@@ -181,7 +194,12 @@ const ChatWidget = () => {
                     </div>
                     <div className="flex items-center gap-2">
                         <button
-                            onClick={() => setShowHistory(!showHistory)}
+                            onClick={() => {
+                                if (!showHistory) {
+                                    dispatch(fetchChatSessions(user?.user_id || user?.id));
+                                }
+                                setShowHistory(!showHistory);
+                            }}
                             className="hover:bg-white/20 p-1.5 rounded-full transition-colors"
                             title="History"
                         >
