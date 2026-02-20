@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchMixedQuiz, selectQuizLoading } from '../redux/slices/quizSlice';
 import { selectUser } from '../redux/slices/authSlice';
 import { selectUserProfile, fetchUserDetails } from '../redux/slices/userSlice';
-import { canAttemptQuiz } from '../utils/accessControl';
+import { canAttemptQuiz, trackQuizAttempt } from '../utils/accessControl';
 
 const MixedQuizModal = ({ isOpen, onClose, chapterId, chapterName, courseId = null, onAccessDenied = null }) => {
     const dispatch = useDispatch();
@@ -63,9 +63,9 @@ const MixedQuizModal = ({ isOpen, onClose, chapterId, chapterName, courseId = nu
 
         try {
             await dispatch(fetchMixedQuiz(payload)).unwrap();
+            // Track the attempt for free users
+            trackQuizAttempt(activeUser, chapterId);
             onClose();
-            // Use 'direct' or specific ID logic if backend returns ID. 
-            // Based on previous flow, we might nav to 'direct' if questions are loaded into currentQuiz
             navigate('/quiz/taking/direct');
         } catch (err) {
             console.error(err);

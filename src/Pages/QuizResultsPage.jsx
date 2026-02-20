@@ -220,7 +220,7 @@ function QuizResultsPage() {
                 {/* Action Buttons */}
                 <div className="flex gap-4 justify-center mb-8">
                     <button
-                        onClick={() => navigate('/courses')}
+                        onClick={() => navigate('/courses/amc')}
                         className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-semibold"
                     >
                         Take Another Quiz

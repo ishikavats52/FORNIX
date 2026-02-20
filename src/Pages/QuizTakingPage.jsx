@@ -12,7 +12,6 @@ import { selectUser } from '../redux/slices/authSlice';
 import { selectUserProfile, fetchUserDetails } from '../redux/slices/userSlice';
 import { selectCurrentMockTest, submitMockTest } from '../redux/slices/mockTestsSlice';
 import { showNotification } from '../redux/slices/uiSlice';
-import { trackQuizAttempt } from '../utils/accessControl';
 import API from '../api/api';
 
 function QuizTakingPage() {
@@ -201,10 +200,6 @@ function QuizTakingPage() {
 
                 localStorage.setItem('quiz_results_direct', JSON.stringify(quizResults));
 
-                // Track quiz attempt for free users
-                trackQuizAttempt(activeUser, 'direct', quiz?.chapter_id);
-                console.log('[QuizTakingPage] Tracked quiz attempt for user:', activeUser?.id || activeUser?.user_id);
-
                 dispatch(showNotification({
                     type: 'success',
                     message: `Quiz completed! Score: ${correctCount}/${totalQuestions}`
@@ -276,10 +271,6 @@ function QuizTakingPage() {
             } else {
                 // Submit to regular quiz endpoint
                 const result = await dispatch(submitQuiz(submissionData)).unwrap();
-
-                // Track quiz attempt for free users
-                trackQuizAttempt(activeUser, result.quiz_id || attemptId, quiz?.chapter_id);
-                console.log('[QuizTakingPage] Tracked quiz attempt for user:', activeUser?.id || activeUser?.user_id);
 
                 dispatch(showNotification({
                     type: 'success',

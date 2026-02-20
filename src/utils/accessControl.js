@@ -118,6 +118,18 @@ export const getRemainingQuizAttempts = (user) => {
 };
 
 /**
+ * Get number of quiz attempts already USED by the user
+ * Returns 0 for a fresh free user, up to QUIZ_LIMIT_FREE_USER
+ */
+export const getUsedQuizAttempts = (user) => {
+  if (!user) return 0;
+  if (isActiveSubscriber(user)) return 0;
+  
+  const attemptsData = getQuizAttemptsData(user.id || user.user_id);
+  return Math.min(attemptsData.total, QUIZ_LIMIT_FREE_USER);
+};
+
+/**
  * Track a quiz attempt for the user
  */
 export const trackQuizAttempt = (user, quizId, chapterId = null) => {

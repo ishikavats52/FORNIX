@@ -11,7 +11,7 @@ import { selectUserProfile, fetchUserDetails } from "../redux/slices/userSlice";
 import { showNotification } from "../redux/slices/uiSlice";
 import UpgradePrompt from "../Components/UpgradePrompt";
 import QuizAttemptsCounter from "../Components/QuizAttemptsCounter";
-import { canAttemptQuiz, getRemainingQuizAttempts, trackQuizAttempt, isActiveSubscriber } from "../utils/accessControl";
+import { canAttemptQuiz, getUsedQuizAttempts, trackQuizAttempt, isActiveSubscriber } from "../utils/accessControl";
 
 function QuizStart() {
   const [searchParams] = useSearchParams();
@@ -113,6 +113,9 @@ function QuizStart() {
         navigate("/courses");
         return;
       }
+
+      // Track the attempt for free users before navigating
+      trackQuizAttempt(activeUser, chapterId || (topicIds ? topicIds[0] : 'topic'));
 
       // Navigate to quiz taking page
       // Use a temporary ID since we're loading questions directly
@@ -220,7 +223,7 @@ function QuizStart() {
         {activeUser && !isActiveSubscriber(activeUser) && (
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
             <QuizAttemptsCounter
-              remaining={getRemainingQuizAttempts(activeUser)}
+              used={getUsedQuizAttempts(activeUser)}
               total={2}
             />
           </div>

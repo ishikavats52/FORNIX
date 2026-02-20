@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import banner from '../Assets/banner.webp';
 import {
   fetchSubjectsByCourse,
@@ -51,6 +51,21 @@ const isValidUUID = (value) =>
 function AMC() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Scroll to pricing section if navigated with #pricing hash
+  useEffect(() => {
+    if (location.hash === '#pricing') {
+      // Wait for content to render before scrolling
+      const timer = setTimeout(() => {
+        const pricingEl = document.getElementById('pricing');
+        if (pricingEl) {
+          pricingEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [location.hash]);
 
   // Preference selection state
   const [preferences, setPreferences] = useState({});
@@ -971,11 +986,11 @@ function AMC() {
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-5xl font-extrabold text-blue-900 mb-4">Pricing Plans</h2>
               <p className="text-gray-500 text-lg">Choose the right plan based on your preparation timeline.</p>
-          
+
             </div>
             <div className="text-center mb-12">
               <p className="text-gray-500 text-lg">We strongly recommend that you review the sample content / free trial before purchasing any plan</p>
-                
+
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
               {/* Filter plans for this course */}

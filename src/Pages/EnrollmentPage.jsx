@@ -25,10 +25,6 @@ const EnrollmentPage = () => {
         if (courseId) {
             dispatch(fetchCourseDetails(courseId)).then((action) => {
                 if (action.payload) {
-                    // Find the plan from the course details (assuming course object has plans)
-                    // If fetchCourseDetails returns just course info, we might need a separate call or look into action.payload
-                    // For now, let's assume we can get pricing from somewhere or hardcode default
-                    // The user payload used 499.
                     const foundPlan = action.payload.plans?.find(p => p.uuid === planId || p.id === planId) || { price: 499, name: 'Premium Plan' };
                     setPlanDetails(foundPlan);
                 }

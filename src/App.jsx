@@ -66,7 +66,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<ContactUs />} />
         {/* <Route path="/courses" element={<Courses />} /> */}
-        {/* <Route path="/pricingPage" element={<PricingPage />} /> */}
+        <Route path="/pricing" element={<PricingPage />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
         <Route path="/privacy-policy" element={<PrivacyPolicies />} />
         <Route path="/refund-policy" element={<RefundPolicy />} />

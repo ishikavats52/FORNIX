@@ -16,7 +16,7 @@ import PDFViewerModal from '../Components/PDFViewerModal';
 import MixedQuizModal from '../Components/MixedQuizModal';
 import UpgradePrompt from '../Components/UpgradePrompt';
 import QuizAttemptsCounter from '../Components/QuizAttemptsCounter';
-import { canAttemptQuiz, getRemainingQuizAttempts, hasExceededQuizLimit, getNoteType } from '../utils/accessControl';
+import { canAttemptQuiz, getUsedQuizAttempts, hasExceededQuizLimit, getNoteType } from '../utils/accessControl';
 
 function ChaptersPage() {
     const { subjectId } = useParams();
@@ -133,7 +133,7 @@ function ChaptersPage() {
                     {activeUser && !activeUser.has_active_subscription && (
                         <div className="md:w-80">
                             <QuizAttemptsCounter
-                                remaining={getRemainingQuizAttempts(activeUser)}
+                                used={getUsedQuizAttempts(activeUser)}
                                 total={2}
                             />
                         </div>

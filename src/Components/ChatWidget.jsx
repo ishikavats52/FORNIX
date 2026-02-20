@@ -169,7 +169,7 @@ const ChatWidget = () => {
             courseName: courseToSend,
             sessionId: sessionId
         }));
-        setInput('');
+        setInput(''); 
     };
 
     if (!user) return null; // Or show prompt to login

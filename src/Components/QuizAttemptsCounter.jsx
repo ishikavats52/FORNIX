@@ -2,10 +2,15 @@ import React from 'react';
 
 /**
  * QuizAttemptsCounter Component
- * Shows remaining quiz attempts for free users
+ * Shows how many of the free quiz attempts a user has USED.
+ * Props:
+ *   used  - number of quizzes taken so far (starts at 0)
+ *   total - max free quizzes allowed (default 2)
  */
-function QuizAttemptsCounter({ remaining, total = 2 }) {
-    const percentage = (remaining / total) * 100;
+function QuizAttemptsCounter({ used = 0, total = 2 }) {
+    const remaining = Math.max(0, total - used);
+    // Progress bar fills as quizzes are USED (0 used = empty bar)
+    const percentage = (used / total) * 100;
 
     // Determine color based on remaining attempts
     const getColor = () => {
@@ -53,12 +58,13 @@ function QuizAttemptsCounter({ remaining, total = 2 }) {
                         Free Quiz Attempts
                     </span>
                 </div>
+                {/* Shows used/total e.g. 0/2, 1/2, 2/2 */}
                 <span className={`text-2xl font-bold ${classes.text}`}>
-                    {remaining}/{total}
+                    {used}/{total}
                 </span>
             </div>
 
-            {/* Progress Bar */}
+            {/* Progress Bar — fills as quizzes are used */}
             <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                 <div
                     className={`${classes.progress} h-2 rounded-full transition-all duration-300`}
