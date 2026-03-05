@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchCoursesWithPlans, fetchEnrolledCourses, selectCourses } from '../redux/slices/coursesSlice';
 import { selectUser } from '../redux/slices/authSlice';
-import { selectUserProfile } from '../redux/slices/userSlice';
+import { selectUserProfile, fetchUserDetails } from '../redux/slices/userSlice';
 import RazorpayCheckout from './RazorpayCheckout';
 
 /**
@@ -65,7 +65,10 @@ function UpgradePrompt({ isOpen, onClose, feature = 'quiz', courseId }) {
 
     const handlePaymentSuccess = async () => {
         try {
-            if (uid) await dispatch(fetchEnrolledCourses(uid)).unwrap();
+            if (uid) {
+                await dispatch(fetchEnrolledCourses(uid)).unwrap();
+                await dispatch(fetchUserDetails(uid)).unwrap();
+            }
         } catch (e) {
             console.error('Post-payment refresh error:', e);
         }

@@ -21,6 +21,7 @@ import { showNotification } from '../redux/slices/uiSlice';
 import { selectUser } from '../redux/slices/authSlice';
 import UpgradePrompt from '../Components/UpgradePrompt';
 import { canAccessCourse } from '../utils/accessControl';
+import UniversityExamsSection from '../Components/UniversityExamsSection';
 
 function FMGE() {
   const dispatch = useDispatch();
@@ -144,6 +145,9 @@ function FMGE() {
             </div>
           </div>
         </div>
+
+        {/* University Exams Section */}
+        <UniversityExamsSection courseId={COURSE_ID} />
 
         {/* Mock Tests Section */}
 

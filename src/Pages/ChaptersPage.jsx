@@ -95,7 +95,8 @@ function ChaptersPage() {
     }, [activeTab, dispatch, courseId, activeUser]);
 
     const handleOpenPdf = (note) => {
-        setSelectedPdf({ url: note.file_url, title: note.title });
+        const url = note.file_url || note.pdf_url || note.url;
+        setSelectedPdf({ url: url, title: note.title || note.name || 'Document' });
         setShowPdfModal(true);
     };
 

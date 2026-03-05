@@ -33,6 +33,7 @@ import {
   selectDiscussionsLoading,
 } from '../redux/slices/discussionsSlice';
 import DiscussionCard from '../Components/DiscussionCard';
+import UniversityExamsSection from '../Components/UniversityExamsSection';
 
 import RazorpayCheckout from '../Components/RazorpayCheckout';
 import { selectUser } from '../redux/slices/authSlice';
@@ -236,8 +237,13 @@ function AMC() {
   };
 
   const handleSubjectClick = (subject) => {
+    if (!canAccessCourse(activeUser, COURSE_ID)) {
+      setUpgradeFeature('course_access');
+      setShowUpgradePrompt(true);
+      return;
+    }
     dispatch(setSelectedSubject(subject));
-    navigate(`/courses/amc/subjects/${subject.id}`);
+    navigate(`/subjects/${subject.id}/chapters`, { state: { courseId: COURSE_ID } });
   };
 
   const handlePodcastSubjectClick = async (subject) => {
@@ -429,6 +435,9 @@ function AMC() {
             )}
           </div>
         </div>
+
+        {/* University Exams Section */}
+        <UniversityExamsSection courseId={COURSE_ID} />
 
         {/* Highlighted Mock Tests Section */}
         {!mockTestsLoading && mockTests.length > 0 && (
@@ -833,14 +842,23 @@ function AMC() {
             <p className="text-gray-500">Subjects are currently being updated.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
             {subjects.map((subject) => (
               <div
                 key={subject.id}
                 onClick={() => handleSubjectClick(subject)}
-                className="group bg-white rounded-2xl p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 hover:border-purple-200 relative overflow-hidden"
+                className={`group bg-white rounded-2xl p-6 hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 hover:border-purple-200 relative overflow-hidden ${!canAccessCourse(activeUser, COURSE_ID) ? 'opacity-75' : ''}`}
               >
                 <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-purple-50 to-transparent rounded-bl-full opacity-50 group-hover:scale-110 transition-transform -mr-4 -mt-4"></div>
+
+                {/* Lock Icon for locked courses */}
+                {!canAccessCourse(activeUser, COURSE_ID) && (
+                  <div className="absolute top-3 right-3 w-8 h-8 bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center z-20">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
+                )}
 
                 <div className="relative z-10">
                   <div className="flex items-start justify-between mb-6">
@@ -874,7 +892,7 @@ function AMC() {
                   </p>
 
                   <div className="flex items-center text-purple-600 font-bold text-sm group-hover:translate-x-1 transition-transform">
-                    Start Learning
+                    {!canAccessCourse(activeUser, COURSE_ID) ? 'Unlock to Access' : 'Start Learning'}
                     <svg className="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>

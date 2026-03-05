@@ -17,6 +17,7 @@ import discussionsReducer from './slices/discussionsSlice';
 import rankingsReducer from './slices/rankingsSlice';
 import smartTrackingReducer from './slices/smartTrackingSlice';
 import chatReducer from './slices/chatSlice';
+import universityExamsReducer from './slices/universityExamsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -38,6 +39,7 @@ export const store = configureStore({
     rankings: rankingsReducer,
     smartTracking: smartTrackingReducer,
     chat: chatReducer,
+    universityExams: universityExamsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

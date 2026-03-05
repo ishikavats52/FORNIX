@@ -441,10 +441,11 @@ function Dashboard() {
                                                 ? "purple"
                                                 : "orange";
 
-                                    // Determine redirect path
                                     let courseLink = `/courses/${course.id}/subjects`;
                                     if ((course.name || "").toLowerCase().includes('amc')) {
                                         courseLink = '/courses/amc';
+                                    } else if ((course.name || "").toLowerCase().includes('fmge')) {
+                                        courseLink = '/courses/FMGE';
                                     }
 
                                     return (
@@ -492,7 +493,6 @@ function Dashboard() {
                                                         "Comprehensive curriculum designed by top medical experts."}
                                                 </p>
 
-                                                {/* Plan Details Section - Styled to fit correctly */}
                                                 <div className="mt-auto">
                                                     <div className="group/plan border border-gray-200 rounded-xl p-4 hover:border-orange-500 hover:bg-orange-50 transition-all relative overflow-hidden flex justify-between items-center gap-4 mb-4">
                                                         <div className="flex-1">

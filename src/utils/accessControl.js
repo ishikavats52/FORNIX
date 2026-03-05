@@ -185,7 +185,13 @@ export const canAccessCourse = (user, courseId) => {
   
   // Legacy/Slug Check: Handle case where user has "course": "amc" instead of UUID
   const AMC_ID = 'cc613b33-3986-4d67-b33a-009b57a72dc8';
+  const FMGE_ID = 'f6dd0d25-825f-4c9c-93fe-58cae47378f3';
+
   if ((user.course === 'amc' || user.course === 'AMC') && courseId === AMC_ID) {
+    return true;
+  }
+  
+  if ((user.course === 'fmge' || user.course === 'FMGE') && courseId === FMGE_ID) {
     return true;
   }
   

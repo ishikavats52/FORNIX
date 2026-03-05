@@ -19,6 +19,7 @@ import {
 } from '../redux/slices/mockTestsSlice'; // Assuming these exist or we skip mock tests if not generic enough
 import { showNotification } from '../redux/slices/uiSlice';
 import banner from '../Assets/banner.webp'; // Default banner
+import UniversityExamsSection from '../Components/UniversityExamsSection';
 
 function SubjectsPage() {
     const { courseId } = useParams();
@@ -116,6 +117,9 @@ function SubjectsPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* University Exams Section */}
+                <UniversityExamsSection courseId={courseId} />
 
                 {/* Mock Tests (Generic) */}
                 {!mockTestsLoading && mockTests.length > 0 && (

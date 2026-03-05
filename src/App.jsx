@@ -34,13 +34,15 @@ import PricingPage from '../src/Pages/PricingPage.jsx';
 import PYTSubjects from '../src/Pages/PYTSubjects.jsx';
 import PYTTopics from '../src/Pages/PYTTopics.jsx';
 import DiscussionPostsPage from '../src/Pages/DiscussionPostsPage.jsx';
-import AMCSubjectPage from '../src/Pages/AMCSubjectPage.jsx';
 import SmartTrackingPage from '../src/Pages/SmartTrackingPage.jsx';
 import ChatWidget from './Components/ChatWidget.jsx';
 import EnrollmentPage from '../src/Pages/EnrollmentPage.jsx';
 import TermsAndConditions from '../src/Pages/TermsAndConditions.jsx';
 import PrivacyPolicies from '../src/Pages/PrivacyPolicies.jsx';
 import RefundPolicy from '../src/Pages/RefundPolicy.jsx';
+import UniversityExamInstructionsPage from '../src/Pages/UniversityExamInstructionsPage.jsx';
+import UniversityExamTakingPage from '../src/Pages/UniversityExamTakingPage.jsx';
+import UniversityExamResultPage from '../src/Pages/UniversityExamResultPage.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -157,11 +159,6 @@ function App() {
             <PYTTopics />
           </ProtectedRoute>
         } />
-        <Route path="/courses/amc/subjects/:subjectId" element={
-          <ProtectedRoute>
-            <AMCSubjectPage />
-          </ProtectedRoute>
-        } />
         <Route path="/discussions/:discussionId" element={
           <ProtectedRoute>
             <DiscussionPostsPage />
@@ -202,6 +199,32 @@ function App() {
           }
         />
         <Route path="/rankings" element={<RankingsPage />} />
+
+        {/* Protected University Exam Routes */}
+        <Route
+          path="/university-exams/:examId/instructions"
+          element={
+            <ProtectedRoute>
+              <UniversityExamInstructionsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/university-exams/:examId/taking"
+          element={
+            <ProtectedRoute>
+              <UniversityExamTakingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/university-exams/:examId/result"
+          element={
+            <ProtectedRoute>
+              <UniversityExamResultPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Protected Notes Routes */}
         <Route path="/notes" element={
