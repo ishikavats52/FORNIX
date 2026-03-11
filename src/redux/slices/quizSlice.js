@@ -247,6 +247,30 @@ export const fetchMixedQuiz = createAsyncThunk(
   }
 );
 
+export const startMultiChapterQuiz = createAsyncThunk(
+  'quiz/startMultiChapter',
+  async (quizData, { rejectWithValue, getState }) => {
+    try {
+      const state = getState();
+      let user_id = quizData.user_id;
+      if (!user_id) {
+        user_id = state.auth.user?.user_id || state.auth.user?.id || state.auth.user?.uuid;
+      }
+      
+      const dataToSend = {
+        ...quizData,
+        user_id
+      };
+      
+      // AMC multi-chapter quiz endpoint 
+      const response = await API.post('/amc/multi-chapter-quiz', dataToSend);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to start multi-chapter quiz');
+    }
+  }
+);
+
 // AMC Quiz thunks
 export const startAMCQuiz = createAsyncThunk(
   'quiz/startAMC',
@@ -528,6 +552,33 @@ const quizSlice = createSlice({
         state.currentQuiz = transformedQuiz;
       })
       .addCase(fetchMixedQuiz.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // Multi-chapter quiz
+      .addCase(startMultiChapterQuiz.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(startMultiChapterQuiz.fulfilled, (state, action) => {
+        state.loading = false;
+        // Transform API response to match expected format
+        const transformedQuiz = {
+          ...action.payload,
+          questions: action.payload.data?.map(q => ({
+            id: q.id,
+            question: q.question_text,
+            options: q.options?.map(opt => opt.content) || [],
+            correct_answer: q.correct_answer,
+            explanation: q.explanation,
+            question_type: q.question_type,
+            question_image_url: q.question_image_url
+          })) || []
+        };
+        state.currentQuiz = transformedQuiz;
+      })
+      .addCase(startMultiChapterQuiz.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

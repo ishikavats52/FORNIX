@@ -58,3 +58,14 @@
 .text-hover-effect:hover::after {
   @apply w-full;
 }
+
+/* Global Security Layers */
+body {
+  /* Prevent text and image selection */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Prevent drag and drop of elements, especially images */
+  -webkit-user-drag: none;
+}

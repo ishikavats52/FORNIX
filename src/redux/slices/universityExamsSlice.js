@@ -58,7 +58,7 @@ export const fetchUniversityExamDetails = createAsyncThunk(
       const response = await API.post('/university-exams/details', { user_id, exam_id });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.error || 'Failed to fetch exam details');
+      return rejectWithValue(error.response?.data?.error || error.response?.data?.message || 'Failed to fetch exam details');
     }
   }
 );

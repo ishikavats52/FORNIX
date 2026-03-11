@@ -21,6 +21,8 @@ import { showNotification } from '../redux/slices/uiSlice';
 import { selectUser } from '../redux/slices/authSlice';
 import UpgradePrompt from '../Components/UpgradePrompt';
 import { canAccessCourse } from '../utils/accessControl';
+import ChapterCountDisplay from '../Components/ChapterCountDisplay';
+import { formatSubjectName } from '../utils/formatters';
 
 function NeetUg() {
   const dispatch = useDispatch();
@@ -183,15 +185,13 @@ function NeetUg() {
                 <div className="relative z-10">
                   <div className="flex items-start justify-between mb-6">
                     <div className="w-14 h-14 bg-linear-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform duration-300">
-                      <span className="text-2xl font-bold">{subject.name.charAt(0)}</span>
+                      <span className="text-2xl font-bold">{formatSubjectName(subject.name).charAt(0)}</span>
                     </div>
-                    <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                      {subject.chapter_count || '0'} Chapters
-                    </span>
+                    <ChapterCountDisplay subject={subject} />
                   </div>
 
                   <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-1">
-                    {subject.name}
+                    {formatSubjectName(subject.name)}
                   </h3>
 
                   <p className="text-gray-600 text-sm line-clamp-2 mb-6 h-10 leading-relaxed">

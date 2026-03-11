@@ -56,6 +56,57 @@ function App() {
     }
   }, [dispatch, token, user]);
 
+  // Global protection against screenshots, printing, and right-clicks
+  useEffect(() => {
+    // Disable right-click context menu
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+      return false;
+    };
+
+    // Disable common screenshot / dev tools shortcuts
+    const handleKeyDown = (e) => {
+      // 123 is F12, 44 is PrintScreen, etc.
+      if (
+        e.key === 'PrintScreen' ||
+        e.keyCode === 44 ||
+        e.keyCode === 123 ||
+        (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
+        (e.ctrlKey && e.shiftKey && e.keyCode === 74) || // Ctrl+Shift+J
+        (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
+        (e.ctrlKey && e.keyCode === 80) || // Ctrl+P
+        (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5')) // Mac screenshot keys
+      ) {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    const handleKeyUp = (e) => {
+      if (e.key === 'PrintScreen' || e.keyCode === 44) {
+        // Some browsers fire print screen on key up
+        try {
+          if (document.hasFocus()) {
+            navigator.clipboard.writeText(''); // Attempt to clear clipboard
+          }
+        } catch (err) {
+          // Ignore errors
+        }
+        e.preventDefault();
+      }
+    }
+
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
+
   return (
     <Router>
       <ScrollToTop />

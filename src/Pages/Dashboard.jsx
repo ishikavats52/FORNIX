@@ -36,8 +36,14 @@ function Dashboard() {
 
     const user = useSelector(selectUser);
     const userProfile = useSelector(selectUserProfile);
-    // const courses = useSelector(selectEnrolledCourses);
-    const courses = useSelector((state) => state.courses.enrolledCourses);
+
+    // Standardized User ID resolution - PRIORITIZE auth user over profile user to prevent stickiness
+    const userId = user?.id || user?.user_id || user?._id || user?.uuid ||
+        userProfile?.id || userProfile?.user_id || userProfile?._id || userProfile?.uuid;
+
+    // Robust course selection from state
+    const coursesSelector = useSelector((state) => state.courses.enrolledCourses);
+    const courses = Array.isArray(coursesSelector) ? coursesSelector : [];
 
     const loading = useSelector(selectCoursesLoading);
     const progress = useSelector(selectProgress);
@@ -111,7 +117,6 @@ function Dashboard() {
             const compressed = await compressImage(file);
 
             // Immediately upload
-            const userId = user?.user_id || user?.id || user?.uuid;
             const updateData = {
                 id: userId,
                 profile_picture: compressed
@@ -138,33 +143,49 @@ function Dashboard() {
 
     // Load profile picture from userProfile or localStorage
     useEffect(() => {
-        const userId = user?.user_id || user?.id || user?.uuid;
         if (userId) {
             const localStorageKey = `profile_picture_${userId}`;
             const savedPicture = userProfile?.profile_picture || localStorage.getItem(localStorageKey);
             setProfilePictureUrl(savedPicture);
         }
-    }, [user, userProfile]);
+    }, [userId, userProfile]);
+
+    // For debugging
+    useEffect(() => {
+        console.log('Dashboard Component State:', {
+            hasUser: !!user,
+            userId: userId,
+            coursesCount: courses.length,
+            enrolledCoursesRaw: courses
+        });
+    }, [user, courses, userId]);
 
     useEffect(() => {
-        const userId = user?.user_id || user?.id || user?.uuid;
+        console.log('Dashboard useEffect - Resolved User ID for fetch:', userId);
         if (userId) {
-            dispatch(fetchUserDetails(userId));
             dispatch(fetchEnrolledCourses(userId));
+            dispatch(fetchUserDetails(userId));
             dispatch(fetchUserProgress(userId));
             dispatch(fetchStudyMaterials(userId));
             dispatch(fetchMCQBank(userId));
             dispatch(fetchRankings());
+        } else {
+            console.warn('Dashboard: No valid user ID found for fetching courses', user);
         }
-    }, [dispatch, user]);
+    }, [dispatch, userId]);
 
     const handleLogout = () => {
         dispatch(logoutUser());
         navigate('/');
     };
 
-    const handleCourseClick = (courseId) => {
-        navigate(`/courses/${courseId}`);
+    const handleCourseClick = (courseId, courseName) => {
+        // Handle specific route for FMGE
+        if (courseId === 'f6dd0d25-825f-4c9c-93fe-58cae47378f3' || (courseName && courseName.trim().toUpperCase() === 'FMGE')) {
+            navigate('/courses/FMGE');
+            return;
+        }
+        navigate(`/courses/${courseId}/subjects`);
     };
 
     const handleSubjectClick = (subjectId) => {
@@ -425,12 +446,13 @@ function Dashboard() {
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {courses.map((item, idx) => {
-                                    // Handle potential structure variations
+                                    console.log('Dashboard Course Item Raw:', item);
+                                    // Handle potential structure variations (item might be wrapped in .course or be the course itself)
                                     const course = item.course || item;
-                                    const plan = item.plan || item.enrolled_plan || {};
-                                    const subscription = item.subscription || {};
+                                    const plan = item.plan || item.enrolled_plan || item.plan_details || {};
+                                    const subscription = item.subscription || (item.id && item.course_id ? item : {});
 
-                                    console.log('Dashboard Course Item:', item);
+                                    console.log('Dashboard Resolved - Course:', course?.name, 'Plan:', plan?.name);
 
                                     // Dynamic colors based on course name (fallback logic) - MATCHING Courses.jsx
                                     const cardColor = (course.name || "").includes("NEET PG")
@@ -451,7 +473,7 @@ function Dashboard() {
                                     return (
                                         <div
                                             key={course.id || idx}
-                                            onClick={() => navigate(courseLink)}
+                                            onClick={() => handleCourseClick(course.id, course.name)}
                                             className="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col cursor-pointer"
                                         >
                                             <div className="h-52 bg-gray-200 relative group overflow-hidden">

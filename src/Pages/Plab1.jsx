@@ -21,6 +21,8 @@ import { showNotification } from '../redux/slices/uiSlice';
 import { selectUser } from '../redux/slices/authSlice';
 import UpgradePrompt from '../Components/UpgradePrompt';
 import { canAccessCourse } from '../utils/accessControl';
+import ChapterCountDisplay from '../Components/ChapterCountDisplay';
+import { formatSubjectName } from '../utils/formatters';
 
 function Plab1() {
     const dispatch = useDispatch();
@@ -244,7 +246,7 @@ function Plab1() {
                                             <span className="text-2xl font-bold">{subject.name.charAt(0)}</span>
                                         </div>
                                         <span className="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                                            {subject.chapter_count || '0'} Chapters
+                                            {subject.chapters?.length || subject.chapters_count || subject.chapter_count || '0'} Chapters
                                         </span>
                                     </div>
 

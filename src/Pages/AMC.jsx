@@ -27,6 +27,8 @@ import {
   selectPodcastsLoadingBySubject,
 } from '../redux/slices/podcastsSlice';
 import PodcastPlayer from '../Components/PodcastPlayer';
+import ChapterCountDisplay from '../Components/ChapterCountDisplay';
+import { formatSubjectName } from '../utils/formatters';
 import {
   fetchDiscussions,
   selectDiscussions,
@@ -875,16 +877,14 @@ function AMC() {
                         />
                       ) : null}
                       <span className={`text-2xl font-bold ${(subject.image || subject.logo || subject.icon) ? 'hidden' : ''}`} style={{ display: (subject.image || subject.logo || subject.icon) ? 'none' : 'block' }}>
-                        {subject.name.charAt(0)}
+                        {formatSubjectName(subject.name).charAt(0)}
                       </span>
                     </div>
-                    <span className="bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                      {subject.chapter_count || '0'} Chapters
-                    </span>
+                    <ChapterCountDisplay subject={subject} />
                   </div>
 
                   <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors line-clamp-1">
-                    {subject.name}
+                    {formatSubjectName(subject.name)}
                   </h3>
 
                   <p className="text-gray-600 text-sm line-clamp-2 mb-6 h-10 leading-relaxed">

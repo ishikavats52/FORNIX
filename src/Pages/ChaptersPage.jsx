@@ -46,6 +46,7 @@ function ChaptersPage() {
 
     const [activeTab, setActiveTab] = useState('notes'); // 'notes' or 'quizzes'
     const [expandedChapters, setExpandedChapters] = useState({});
+    const [selectedChapters, setSelectedChapters] = useState([]);
 
     // PDF Viewer State
     const [showPdfModal, setShowPdfModal] = useState(false);
@@ -59,6 +60,14 @@ function ChaptersPage() {
             dispatch(fetchChaptersBySubject(subjectId));
         }
     }, [dispatch, subjectId]);
+
+    const handleSelectChapter = (chapterId) => {
+        setSelectedChapters(prev =>
+            prev.includes(chapterId)
+                ? prev.filter(id => id !== chapterId)
+                : [...prev, chapterId]
+        );
+    };
 
     const toggleChapter = (chapterId) => {
         const isExpanding = !expandedChapters[chapterId];
@@ -162,7 +171,7 @@ function ChaptersPage() {
                             : 'text-gray-500 hover:text-gray-700'
                             }`}
                     >
-                        📝 Quizzes (Topics)
+                        📝 Quizzes
                         {activeTab === 'quizzes' && (
                             <span className="absolute bottom-0 left-0 w-full h-1 bg-orange-600 rounded-t-full"></span>
                         )}
@@ -184,6 +193,8 @@ function ChaptersPage() {
                                     activeTab={activeTab}
                                     isOpen={!!expandedChapters[chapter.id]}
                                     onToggle={() => toggleChapter(chapter.id)}
+                                    isSelected={selectedChapters.includes(chapter.id)}
+                                    onSelect={() => handleSelectChapter(chapter.id)}
                                     onOpenPdf={handleOpenPdf}
                                     onQuizNavigate={handleQuizNavigation}
                                     courseId={courseId}
@@ -201,6 +212,32 @@ function ChaptersPage() {
                 title={selectedPdf?.title}
             />
 
+            {/* Floating Bulk Quiz Bar */}
+            {selectedChapters.length > 0 && activeTab === 'quizzes' && (
+                <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] p-4 z-50 transform transition-transform duration-300 translate-y-0">
+                    <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8">
+                        <div>
+                            <span className="font-bold text-lg text-gray-900">{selectedChapters.length}</span>
+                            <span className="text-gray-600 ml-2">Chapter{selectedChapters.length > 1 ? 's' : ''} Selected</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => setSelectedChapters([])}
+                                className="px-4 py-2 text-gray-500 font-semibold hover:text-gray-800 transition"
+                            >
+                                Clear All
+                            </button>
+                            <button
+                                onClick={() => handleQuizNavigation(`/quiz/start?multiChapterIds=${selectedChapters.join(',')}`)}
+                                className="px-6 py-3 bg-orange-600 text-white font-bold rounded-xl shadow-lg hover:bg-orange-700 hover:shadow-xl transition-all hover:scale-105 flex items-center gap-2"
+                            >
+                                ⚡ Start Bulk Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Upgrade Prompt Modal */}
             <UpgradePrompt
                 isOpen={showUpgradePrompt}
@@ -214,7 +251,7 @@ function ChaptersPage() {
 }
 
 // Sub-component for Accordion Item
-function ChapterAccordion({ chapter, activeTab, isOpen, onToggle, onOpenPdf, onQuizNavigate, courseId }) {
+function ChapterAccordion({ chapter, activeTab, isOpen, onToggle, isSelected, onSelect, onOpenPdf, onQuizNavigate, courseId }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -226,11 +263,24 @@ function ChapterAccordion({ chapter, activeTab, isOpen, onToggle, onOpenPdf, onQ
 
     return (
         <div className="border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-md bg-white">
-            <button
-                onClick={onToggle}
-                className={`w-full flex items-center justify-between p-5 transition-colors text-left ${isOpen ? 'bg-orange-50/50' : 'bg-white hover:bg-gray-50'}`}
-            >
-                <div className="flex items-center gap-4">
+            <div className={`w-full flex items-center justify-between p-5 transition-colors ${isOpen ? 'bg-orange-50/50' : 'bg-white hover:bg-gray-50'}`}>
+                <div className="flex items-center gap-4 cursor-pointer flex-1" onClick={onToggle}>
+                    {activeTab === 'quizzes' && (
+                        <div
+                            className="mr-2 flex items-center"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onSelect();
+                            }}
+                        >
+                            <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => { }} // Controlled via onClick div wrapper 
+                                className="w-5 h-5 text-orange-600 rounded border-gray-300 focus:ring-orange-500 cursor-pointer"
+                            />
+                        </div>
+                    )}
                     <span className={`p-2 rounded-lg ${activeTab === 'notes' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
                         {activeTab === 'notes' ? '📄' : '🧩'}
                     </span>
@@ -239,12 +289,12 @@ function ChapterAccordion({ chapter, activeTab, isOpen, onToggle, onOpenPdf, onQ
                         <p className="text-gray-500 text-xs mt-1">{chapter.description || 'View content'}</p>
                     </div>
                 </div>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isOpen ? 'bg-orange-200 rotate-180 text-orange-700' : 'bg-gray-100 text-gray-500'}`}>
+                <div onClick={onToggle} className={`cursor-pointer w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isOpen ? 'bg-orange-200 rotate-180 text-orange-700' : 'bg-gray-100 text-gray-500'}`}>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                 </div>
-            </button>
+            </div>
 
             {/* Expanded Content */}
             <div className={`transition-all duration-300 ease-in-out border-t border-dashed border-gray-200 ${isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>

@@ -47,15 +47,36 @@ const UniversityExamInstructionsPage = () => {
     }
 
     if (error && !currentExam) {
+        const isAlreadyAttempted = error.toLowerCase().includes('already attempted') ||
+            error.toLowerCase().includes('already try') ||
+            error.toLowerCase().includes('completed') ||
+            error.toLowerCase().includes('already taken');
+
         return (
             <div className="min-h-screen pt-32 pb-20 bg-gray-50">
                 <div className="max-w-3xl mx-auto px-4">
-                    <div className="bg-red-50 text-red-600 p-6 rounded-2xl text-center">
-                        <svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        <h2 className="text-xl font-bold mb-2">Error Loading Exam</h2>
-                        <p>{error}</p>
-                        <button onClick={handleGoBack} className="mt-6 px-6 py-2 bg-red-600 text-white rounded-lg font-bold">Go Back</button>
-                    </div>
+                    {isAlreadyAttempted ? (
+                        <div className="bg-blue-50 text-blue-800 p-8 rounded-3xl text-center shadow-sm border border-blue-100 mt-10">
+                            <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+                                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <h2 className="text-3xl font-bold mb-4 text-blue-900">Exam Already Attempted</h2>
+                            <p className="text-blue-700 mb-8 text-lg font-medium">You have already completed this university exam. You cannot take it again.</p>
+                            <div className="flex justify-center gap-4 flex-wrap">
+                                <button onClick={handleGoBack} className="px-8 py-3 bg-white text-blue-600 border-2 border-blue-200 hover:bg-blue-50 rounded-xl font-bold transition-colors">Go Back</button>
+                                <button onClick={() => navigate(`/university-exams/${examId}/result`, { state: { courseId } })} className="px-8 py-3 bg-blue-600 text-white hover:bg-blue-700 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all">View Results</button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="bg-red-50 text-red-600 p-8 rounded-3xl text-center shadow-sm border border-red-100 mt-10">
+                            <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
+                                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <h2 className="text-2xl font-bold mb-3 text-red-900">Error Loading Exam</h2>
+                            <p className="text-red-700 mb-8">{error}</p>
+                            <button onClick={handleGoBack} className="px-8 py-3 bg-red-600 text-white hover:bg-red-700 rounded-xl font-bold shadow-lg shadow-red-200 transition-all">Go Back</button>
+                        </div>
+                    )}
                 </div>
             </div>
         );
@@ -169,8 +190,8 @@ const UniversityExamInstructionsPage = () => {
                                 onClick={handleStartExam}
                                 disabled={!currentExam || loading || questionsCount === 0}
                                 className={`px-12 py-4 rounded-xl font-bold text-lg text-white shadow-lg transition-all transform flex items-center justify-center gap-3 w-full sm:w-auto ${(!currentExam || loading || questionsCount === 0)
-                                        ? 'bg-gray-400 cursor-not-allowed opacity-70'
-                                        : 'bg-linear-to-r from-indigo-600 to-purple-600 hover:shadow-indigo-500/30 hover:scale-105'
+                                    ? 'bg-gray-400 cursor-not-allowed opacity-70'
+                                    : 'bg-linear-to-r from-indigo-600 to-purple-600 hover:shadow-indigo-500/30 hover:scale-105'
                                     }`}
                             >
                                 {loading ? 'Loading Exam...' : questionsCount === 0 ? 'No Questions Available' : 'Start Exam Now'}

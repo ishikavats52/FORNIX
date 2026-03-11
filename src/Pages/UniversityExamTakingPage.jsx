@@ -174,8 +174,8 @@ const UniversityExamTakingPage = () => {
                         </div>
 
                         <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full font-bold border transition-colors ${isTimeWarning
-                                ? 'bg-red-50 text-red-600 border-red-200 animate-pulse'
-                                : 'bg-indigo-50 text-indigo-700 border-indigo-100'
+                            ? 'bg-red-50 text-red-600 border-red-200 animate-pulse'
+                            : 'bg-indigo-50 text-indigo-700 border-indigo-100'
                             }`}>
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -235,13 +235,13 @@ const UniversityExamTakingPage = () => {
                                         key={optionLabel}
                                         onClick={() => handleOptionSelect(currentQuestion.id, optionLabel)}
                                         className={`flex items-start p-4 md:p-5 rounded-2xl border-2 cursor-pointer transition-all duration-200 group ${isSelected
-                                                ? 'border-indigo-600 bg-indigo-50 shadow-md shadow-indigo-100/50 scale-[1.01]'
-                                                : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+                                            ? 'border-indigo-600 bg-indigo-50 shadow-md shadow-indigo-100/50 scale-[1.01]'
+                                            : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
                                             }`}
                                     >
                                         <div className={`flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center mr-4 mt-0.5 font-bold text-sm transition-colors ${isSelected
-                                                ? 'bg-indigo-600 border-indigo-600 text-white'
-                                                : 'border-gray-300 text-gray-500 group-hover:border-indigo-400 group-hover:text-indigo-500 bg-white'
+                                            ? 'bg-indigo-600 border-indigo-600 text-white'
+                                            : 'border-gray-300 text-gray-500 group-hover:border-indigo-400 group-hover:text-indigo-500 bg-white'
                                             }`}>
                                             {optionLabel.toUpperCase()}
                                         </div>
@@ -260,25 +260,33 @@ const UniversityExamTakingPage = () => {
                             onClick={handlePrevious}
                             disabled={currentQuestionIndex === 0}
                             className={`flex items-center px-6 py-3 rounded-xl font-bold transition-colors ${currentQuestionIndex === 0
-                                    ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-                                    : 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100'
+                                ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                                : 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100'
                                 }`}
                         >
                             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                             Previous
                         </button>
 
-                        <button
-                            onClick={handleNext}
-                            disabled={currentQuestionIndex === questions.length - 1}
-                            className={`flex items-center px-8 py-3 rounded-xl font-bold transition-all ${currentQuestionIndex === questions.length - 1
-                                    ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-                                    : 'text-white bg-gray-900 hover:bg-black shadow-lg hover:shadow-xl'
-                                }`}
-                        >
-                            Next
-                            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        </button>
+                        {currentQuestionIndex === questions.length - 1 ? (
+                            <button
+                                onClick={handleSubmit}
+                                disabled={loading || examSubmitted}
+                                className="flex items-center px-8 py-3 rounded-xl font-bold transition-all text-white bg-green-600 hover:bg-green-700 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {loading ? 'Submitting...' : 'Submit Exam'}
+                                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                            </button>
+                        ) : (
+                            <button
+                                onClick={handleNext}
+                                disabled={currentQuestionIndex === questions.length - 1}
+                                className="flex items-center px-8 py-3 rounded-xl font-bold transition-all text-white bg-gray-900 hover:bg-black shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Next
+                                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                            </button>
+                        )}
                     </div>
                 </div>
 
@@ -299,10 +307,10 @@ const UniversityExamTakingPage = () => {
                                     key={q.id}
                                     onClick={() => setCurrentQuestionIndex(idx)}
                                     className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm transition-all ${isCurrent
-                                            ? 'ring-2 ring-indigo-600 ring-offset-2 bg-indigo-600 text-white'
-                                            : isAnswered
-                                                ? 'bg-indigo-100 text-indigo-700 border-2 border-indigo-200'
-                                                : 'bg-gray-50 text-gray-500 border border-gray-200 hover:border-gray-400'
+                                        ? 'ring-2 ring-indigo-600 ring-offset-2 bg-indigo-600 text-white'
+                                        : isAnswered
+                                            ? 'bg-indigo-100 text-indigo-700 border-2 border-indigo-200'
+                                            : 'bg-gray-50 text-gray-500 border border-gray-200 hover:border-gray-400'
                                         }`}
                                 >
                                     {idx + 1}

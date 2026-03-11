@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   fetchChapterQuiz,
   fetchTopicQuiz,
+  startMultiChapterQuiz,
   selectQuizLoading,
 } from "../redux/slices/quizSlice";
 import { selectUser } from "../redux/slices/authSlice";
@@ -36,12 +37,13 @@ function QuizStart() {
 
   const chapterId = searchParams.get("chapterId");
   const topicIds = searchParams.get("topicIds")?.split(",");
+  const multiChapterIds = searchParams.get("multiChapterIds")?.split(",");
   const mockTestId = searchParams.get("mockTestId");
   const isMockTest = searchParams.get("type") === "mock" || mockTestId;
 
   const [quizConfig, setQuizConfig] = useState({
     limit: 20,
-    questionType: "easy",
+    questionType: "Easy",
   });
 
   // Upgrade Prompt State
@@ -74,6 +76,16 @@ function QuizStart() {
         // Handle mock test - navigate to mock test taking page
         navigate(`/quiz/taking/${mockTestId}`);
         return;
+      } else if (multiChapterIds && multiChapterIds.length > 0) {
+        // Handle bulk multi-chapter quiz directly formatting Redux store
+        result = await dispatch(
+          startMultiChapterQuiz({
+            chapter_ids: multiChapterIds,
+            question_type: quizConfig.questionType,
+            limit: quizConfig.limit,
+          }),
+        ).unwrap();
+
       } else if (chapterId) {
         // Fetch chapter quiz directly
         result = await dispatch(
@@ -139,7 +151,7 @@ function QuizStart() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-xl shadow-md p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">
-            Configure Your Quiz
+            {multiChapterIds ? "Configure Bulk Details" : "Configure Your Quiz"}
           </h1>
 
           <div className="space-y-6">
@@ -171,7 +183,7 @@ function QuizStart() {
                 Difficulty Level
               </label>
               <div className="grid grid-cols-3 gap-3">
-                {["easy", "moderate", "difficult"].map((level) => (
+                {["Easy", "Moderate", "Difficult"].map((level) => (
                   <button
                     key={level}
                     onClick={() =>

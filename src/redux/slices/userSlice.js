@@ -67,26 +67,32 @@ const userSlice = createSlice({
       .addCase(fetchUserDetails.fulfilled, (state, action) => {
         state.loading = false;
         // Handle different response formats
-        if (action.payload.success && action.payload.user) {
+        if (action.payload && action.payload.user) {
           // Merge user data with subscriptions
-          const subscriptions = action.payload.subscriptions || [];
-          const hasActiveSub = subscriptions.some(s => s.is_active);
+          // Check multiple potential locations for subscriptions
+          const subscriptions = action.payload.subscriptions || 
+                                action.payload.user.subscriptions || 
+                                action.payload.user.enrolled_courses || 
+                                [];
+          
+          const hasActiveSub = subscriptions.some(s => s.is_active || s.status === 'active' || !!s.id);
           
           state.profile = {
             ...action.payload.user,
             subscriptions: subscriptions,
             has_active_subscription: hasActiveSub,
-            // If they have a subscription, they are definitely paid
-             student_type: hasActiveSub ? 'paid' : (action.payload.user.role === 'user' ? 'free' : action.payload.user.role)
+            // If they have any valid subscription data, consider them paid for UI purposes
+            student_type: (hasActiveSub || subscriptions.length > 0) ? 'paid' : 
+                         (action.payload.user.role === 'user' ? 'free' : action.payload.user.role)
           };
           
           // Also try to set course_id from active subscription if missing
-          if (!state.profile.course_id && hasActiveSub) {
-             const activeSub = subscriptions.find(s => s.is_active);
-             if (activeSub) state.profile.course_id = activeSub.course_id;
+          if (!state.profile.course_id && subscriptions.length > 0) {
+             const activeSub = subscriptions.find(s => s.is_active || s.status === 'active') || subscriptions[0];
+             if (activeSub) state.profile.course_id = activeSub.course_id || activeSub.id;
           }
           
-        } else if (action.payload.user) {
+        } else if (action.payload?.user) {
           state.profile = action.payload.user;
         } else {
           state.profile = action.payload;
@@ -134,7 +140,17 @@ const userSlice = createSlice({
       .addCase(deleteUserAccount.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+      
+      // Clear profile on logout
+      .addMatcher(
+        (action) => action.type === 'auth/logout/fulfilled',
+        (state) => {
+          state.profile = null;
+          state.error = null;
+          state.loading = false;
+        }
+      );
   },
 });
 

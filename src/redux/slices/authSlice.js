@@ -12,8 +12,10 @@ export const registerUser = createAsyncThunk(
           'Content-Type': 'multipart/form-data',
         },
       });
+      console.log('Registration success:', response.data);
       return response.data;
     } catch (error) {
+      console.error('Registration API error:', error.response?.data);
       return rejectWithValue(error.response?.data?.error || 'Registration failed');
     }
   }
@@ -25,8 +27,10 @@ export const registerUserWithPlan = createAsyncThunk(
     try {
       // Use production URL for registration with plan
       const response = await API.post('/auth/register-with-plan', jsonData);
+      console.log('Registration with plan success:', response.data);
       return response.data;
     } catch (error) {
+      console.error('Registration with plan API error:', error.response?.data);
       return rejectWithValue(error.response?.data?.error || 'Registration with plan failed');
     }
   }
@@ -275,7 +279,17 @@ const authSlice = createSlice({
       })
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        // Correctly unpack user object if wrapped in { success, user }
+        state.user = (action.payload?.success && action.payload?.user) 
+          ? action.payload.user 
+          : (action.payload?.user || action.payload);
+        
+        // Persist the clean user object
+        try {
+          localStorage.setItem('user', JSON.stringify(state.user));
+        } catch (e) {
+          console.warn('Failed to persist user to localStorage', e);
+        }
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.loading = false;

@@ -56,10 +56,12 @@ export const fetchEnrolledCourses = createAsyncThunk(
   'courses/fetchEnrolled',
   async (userId, { rejectWithValue }) => {
     try {
+      console.log('coursesSlice: Fetching enrolled courses for ID:', userId);
       // Use the new API endpoint as requested
       const response = await API.post('/user/get', {
         id: userId
       });
+      console.log('coursesSlice: Enrolled courses API Response:', response.data);
       return response.data;
     } catch (error) {
       console.error("Fetch enrolled courses error:", error.response?.data);
@@ -176,22 +178,38 @@ const coursesSlice = createSlice({
       })
       .addCase(fetchEnrolledCourses.fulfilled, (state, action) => {
         state.loading = false;
+        console.log('coursesSlice: fetchEnrolledCourses.fulfilled - Payload:', action.payload);
+        
         if (action.payload && Array.isArray(action.payload.subscriptions)) {
-          // Map subscriptions to the format expected by Dashboard
           state.enrolledCourses = action.payload.subscriptions;
+        } else if (action.payload?.user && Array.isArray(action.payload.user.subscriptions)) {
+          state.enrolledCourses = action.payload.user.subscriptions;
+        } else if (action.payload?.user && Array.isArray(action.payload.user.enrolled_courses)) {
+          state.enrolledCourses = action.payload.user.enrolled_courses;
         } else if (Array.isArray(action.payload)) {
           state.enrolledCourses = action.payload;
         } else if (action.payload && Array.isArray(action.payload.data)) {
           state.enrolledCourses = action.payload.data;
         } else {
-          console.warn('Unexpected enrolled courses format:', action.payload);
+          console.warn('coursesSlice: Unexpected enrolled courses format:', action.payload);
           state.enrolledCourses = [];
         }
+        console.log('coursesSlice: Final enrolledCourses state:', state.enrolledCourses);
       })
       .addCase(fetchEnrolledCourses.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+      
+      // Clear courses on logout
+      .addMatcher(
+        (action) => action.type === 'auth/logout/fulfilled',
+        (state) => {
+          state.enrolledCourses = [];
+          state.error = null;
+          state.loading = false;
+        }
+      );
   },
 });
 
