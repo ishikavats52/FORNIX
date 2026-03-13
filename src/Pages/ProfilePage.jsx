@@ -34,6 +34,7 @@ function ProfilePage() {
         phone: '',
         gender: 'male',
     });
+    const [formErrors, setFormErrors] = useState({});
 
     useEffect(() => {
         const userId = authUser?.user_id || authUser?.id || authUser?.uuid;
@@ -65,14 +66,41 @@ function ProfilePage() {
     }, [profile, authUser]);
 
     const handleChange = (e) => {
+        const { name, value } = e.target;
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value,
+            [name]: value,
         });
+        // Clear error for the field
+        if (formErrors[name]) {
+            setFormErrors(prev => ({ ...prev, [name]: null }));
+        }
+    };
+
+    const validateForm = () => {
+        let err = {};
+        if (!formData.full_name.trim()) {
+            err.full_name = "Full name required";
+        } else if (!/^[a-zA-Z\s]+$/.test(formData.full_name.trim())) {
+            err.full_name = "Name can only contain letters and spaces";
+        }
+
+        if (!formData.email) err.email = "Email required";
+
+        if (!formData.phone) {
+            err.phone = "Phone number required";
+        } else if (!/^\d{10}$/.test(formData.phone)) {
+            err.phone = "Phone number must be exactly 10 digits";
+        }
+
+        setFormErrors(err);
+        return Object.keys(err).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!validateForm()) return;
+
         try {
             const userId = authUser?.user_id || authUser?.id || authUser?.uuid;
             const updateData = {
@@ -370,6 +398,7 @@ function ProfilePage() {
                                         required
                                     />
                                 </div>
+                                {formErrors.full_name && <p className="text-red-500 text-xs mt-1">{formErrors.full_name}</p>}
                             </div>
 
                             {/* Email */}
@@ -418,6 +447,7 @@ function ProfilePage() {
                                         required
                                     />
                                 </div>
+                                {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
                             </div>
 
                             {/* Gender */}

@@ -148,15 +148,26 @@ function Signup() {
     }
   };
 
-  const validateStep1 = () => {
-    let err = {};
+    const validateStep1 = () => {
+        let err = {};
 
-    if (!formData.name.trim()) err.name = "Name required";
-    if (!formData.email) err.email = "Email required";
-    if (!formData.phone) err.phone = "Phone number required";
-    if (!formData.password) err.password = "Password required";
-    else if (formData.password.length < 6) err.password = "Enter at least 6 digit";
-    if (formData.password !== formData.confirmPassword) err.confirmPassword = "Passwords do not match";
+        if (!formData.name.trim()) {
+            err.name = "Name required";
+        } else if (!/^[a-zA-Z\s]+$/.test(formData.name.trim())) {
+            err.name = "Name can only contain letters and spaces";
+        }
+
+        if (!formData.email) err.email = "Email required";
+
+        if (!formData.phone) {
+            err.phone = "Phone number required";
+        } else if (!/^\d{10}$/.test(formData.phone)) {
+            err.phone = "Phone number must be exactly 10 digits";
+        }
+
+        if (!formData.password) err.password = "Password required";
+        else if (formData.password.length < 6) err.password = "Enter at least 6 digit";
+        if (formData.password !== formData.confirmPassword) err.confirmPassword = "Passwords do not match";
 
     if (!formData.country) err.country_id = "Country required";
     if (!formData.college_id) err.college_id = "College required";
