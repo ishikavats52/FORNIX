@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserProfile, selectUser } from './redux/slices/authSlice';
-
+import { requestNotificationPermission, listenForMessages } from "./Components/FirebaseNotifications.jsx";
 import ScrollToTop from './Components/ScrollToTop.jsx';
 import Home from '../src/Pages/Home.jsx'
 import About from '../src/Pages/About.jsx';
@@ -48,6 +48,19 @@ function App() {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const token = localStorage.getItem('token');
+
+  // notification
+
+  useEffect(() => {
+  listenForMessages();
+}, []);
+
+useEffect(() => {
+  if (user?.id) {
+    requestNotificationPermission(user.id);
+  }
+}, [user]);
+
 
   useEffect(() => {
     // Restore user session if token exists but user is null
@@ -292,6 +305,8 @@ function App() {
       <Footer />
     </Router>
   )
+
 }
+
 
 export default App

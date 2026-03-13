@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectUser, logoutUser } from "../redux/slices/authSlice";
 import { selectUserProfile } from "../redux/slices/userSlice";
 import logo from "../assets/FORNIX Final Logo_transparent.png";
+import NotificationBell from "../Components/NotificationBell";
 
 function Header() {
   const navigate = useNavigate();
@@ -108,12 +109,15 @@ function Header() {
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
                 </Link>
               </li>
+             
+
             </ul>
           </nav>
 
           {/* Desktop Login/Profile Section */}
           {user ? (
             <div className="hidden md:flex items-center gap-4">
+              <NotificationBell />
               <Link
                 to="/smart-tracking"
                 className="text-slate-600 font-semibold hover:text-slate-800 transition-colors relative group mr-2"
@@ -184,27 +188,30 @@ function Header() {
             </Link>
           )}
 
-          {/* Mobile Hamburger Button */}
-          <button
-            onClick={toggleMobileMenu}
-            className="md:hidden bg-orange-500 p-2 rounded-full hover:bg-orange-600 transition"
-            aria-label="Toggle menu"
-          >
-            <div className="w-6 h-5 flex flex-col justify-between">
-              <span
-                className={`block h-0.5 w-full bg-white transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''
-                  }`}
-              ></span>
-              <span
-                className={`block h-0.5 w-full bg-white transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''
-                  }`}
-              ></span>
-              <span
-                className={`block h-0.5 w-full bg-white transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''
-                  }`}
-              ></span>
-            </div>
-          </button>
+          {/* Mobile Actions */}
+          <div className="flex md:hidden items-center gap-3">
+            {user && <NotificationBell />}
+            <button
+              onClick={toggleMobileMenu}
+              className="bg-orange-500 p-2 rounded-full hover:bg-orange-600 transition"
+              aria-label="Toggle menu"
+            >
+              <div className="w-6 h-5 flex flex-col justify-between">
+                <span
+                  className={`block h-0.5 w-full bg-white transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''
+                    }`}
+                ></span>
+                <span
+                  className={`block h-0.5 w-full bg-white transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''
+                    }`}
+                ></span>
+                <span
+                  className={`block h-0.5 w-full bg-white transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''
+                    }`}
+                ></span>
+              </div>
+            </button>
+          </div>
         </div>
       </header>
 
@@ -330,6 +337,9 @@ function Header() {
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200 bg-gray-50">
           {user ? (
             <div className="space-y-3">
+              <li>
+
+              </li>
               <Link
                 to="/smart-tracking"
                 onClick={closeMobileMenu}

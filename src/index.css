@@ -69,3 +69,10 @@ body {
   /* Prevent drag and drop of elements, especially images */
   -webkit-user-drag: none;
 }
+
+/* Disable all printing */
+@media print {
+  body {
+    display: none !important;
+  }
+}

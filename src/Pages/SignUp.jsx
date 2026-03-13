@@ -155,6 +155,7 @@ function Signup() {
     if (!formData.email) err.email = "Email required";
     if (!formData.phone) err.phone = "Phone number required";
     if (!formData.password) err.password = "Password required";
+    else if (formData.password.length < 6) err.password = "Enter at least 6 digit";
     if (formData.password !== formData.confirmPassword) err.confirmPassword = "Passwords do not match";
 
     if (!formData.country) err.country_id = "Country required";
