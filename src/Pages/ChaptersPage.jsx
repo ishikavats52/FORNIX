@@ -344,14 +344,14 @@ function ChapterAccordion({ chapter, activeTab, isOpen, onToggle, isSelected, on
                                         onClick={() => setMixedQuizModalOpen(true)}
                                         className="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-bold rounded-lg hover:bg-purple-200 transition-colors"
                                     >
-                                        ⚡ Mixed Quiz
+                                        ⚡ Chapter Quiz
                                     </button>
-                                    <button
+                                    {/* <button
                                         onClick={() => onQuizNavigate(`/quiz/start?chapterId=${chapter.id}`)}
                                         className="text-orange-600 text-sm font-bold hover:underline"
                                     >
                                         Take Full Chapter Quiz
-                                    </button>
+                                    </button> */}
                                 </div>
                             </div>
 

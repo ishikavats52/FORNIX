@@ -90,11 +90,36 @@ function QuizResultsPage() {
     const getStats = (data) => {
         if (!data) return {};
         // Check for results.result.analysis (Mock Test API standard)
-        if (data.result?.analysis) return data.result.analysis;
+        if (data.result?.analysis) {
+            const analysis = { ...data.result.analysis };
+            if (analysis.wrong_answers === undefined && analysis.incorrect_answers !== undefined) {
+                analysis.wrong_answers = analysis.incorrect_answers;
+            }
+            if (analysis.percentage === undefined && analysis.score !== undefined) {
+                analysis.percentage = analysis.score;
+            }
+            return analysis;
+        }
         // Check for data.analysis
-        if (data.analysis) return data.analysis;
+        if (data.analysis) {
+            const analysis = { ...data.analysis };
+            if (analysis.wrong_answers === undefined && analysis.incorrect_answers !== undefined) {
+                analysis.wrong_answers = analysis.incorrect_answers;
+            }
+            if (analysis.percentage === undefined && analysis.score !== undefined) {
+                analysis.percentage = analysis.score;
+            }
+            return analysis;
+        }
         // Check for flat structure (Redux/Local standard)
-        return data;
+        const stats = { ...data };
+        if (stats.wrong_answers === undefined && stats.incorrect_answers !== undefined) {
+            stats.wrong_answers = stats.incorrect_answers;
+        }
+        if (stats.percentage === undefined && stats.score !== undefined) {
+            stats.percentage = stats.score;
+        }
+        return stats;
     };
 
     console.log("result", results)
@@ -158,7 +183,7 @@ function QuizResultsPage() {
     // Handle both 'review' and 'questions' array formats from different API endpoints
     // Check results.result.questions / details as well
     console.log('rreeeee', results)
-    const reviewQuestions = quizId === "direct" ? results?.questions : results?.result?.details || results?.details
+    const reviewQuestions = results?.questions || results?.result?.details || results?.details || results?.result?.questions || [];
 
 
     //     const reviewQuestions = Array.isArray(results?.review)
@@ -190,30 +215,22 @@ function QuizResultsPage() {
 
                     <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
                         <div className="bg-blue-50 rounded-lg p-4">
-                            <div className="text-3xl font-bold text-blue-600">{quizId === "direct" ? results.total_questions : results?.result.analysis.total_questions}</div>
+                            <div className="text-3xl font-bold text-blue-600">{total_questions}</div>
                             <div className="text-sm text-gray-600 mt-1">Total Questions</div>
                         </div>
                         <div className="bg-green-50 rounded-lg p-4">
-                            <div className="text-3xl font-bold text-green-600">{quizId === "direct" ? results.correct_answers : results?.result.analysis.correct_answers}</div>
+                            <div className="text-3xl font-bold text-green-600">{correct_answers}</div>
                             <div className="text-sm text-gray-600 mt-1">Correct</div>
                         </div>
                         <div className="bg-red-50 rounded-lg p-4">
-                            <div className="text-3xl font-bold text-red-600">
-
-                                {quizId === "direct" ? results.incorrect_answers : results?.result.analysis.wrong_answers}
-
-                                <div className="text-sm text-gray-600 mt-1">Incorrect</div>
-                            </div>
+                            <div className="text-3xl font-bold text-red-600">{wrong_answers}</div>
+                            <div className="text-sm text-gray-600 mt-1">Incorrect</div>
                         </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
-                    </div>
-                    {results.time_taken && (
+                    {!!results.time_taken && (
                         <div className="mt-6 text-gray-600">
-                            <span className="font-semibold">Time Taken:</span> {results?.result.time_taken}
+                            <span className="font-semibold">Time Taken:</span> {results?.result?.time_taken || results?.time_taken}
                         </div>
-
-
                     )}
                 </div>
 
@@ -259,7 +276,7 @@ function QuizResultsPage() {
                                     >
                                         <div className="flex items-start justify-between mb-4">
                                             <h3 className="text-lg font-semibold text-gray-900 flex-1">
-                                                {index + 1}. {question.question_text || question.question}
+                                                {index + 1}. {question.question_text || question.question || (typeof question.text === 'string' ? question.text : question.text?.content)}
                                             </h3>
                                             <span className={`px-3 py-1 rounded-full text-sm font-semibold ${isCorrect ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'
                                                 }`}>

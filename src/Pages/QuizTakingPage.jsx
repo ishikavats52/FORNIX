@@ -189,7 +189,9 @@ function QuizTakingPage() {
                     quiz_id: 'direct',
                     total_questions: totalQuestions,
                     correct_answers: correctCount,
+                    incorrect_answers: totalQuestions - correctCount,
                     score: totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0,
+                    percentage: totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0,
                     time_taken: quiz?.duration ? (quiz.duration * 60 - (timeRemaining || 0)) : 0,
                     questions: quiz.questions.map(q => ({
                         ...q,
