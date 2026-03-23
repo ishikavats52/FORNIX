@@ -55,7 +55,7 @@ function QuizAttemptsCounter({ used = 0, total = 2 }) {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     <span className={`font-semibold ${classes.text}`}>
-                        Free Quiz Attempts
+                        Free Test Attempts
                     </span>
                 </div>
                 {/* Shows used/total e.g. 0/2, 1/2, 2/2 */}
@@ -76,15 +76,15 @@ function QuizAttemptsCounter({ used = 0, total = 2 }) {
             <p className="text-sm text-gray-600">
                 {remaining === 0 ? (
                     <span className="font-semibold">
-                        You've used all free attempts. Upgrade for unlimited quizzes!
+                        You've used all free attempts. Upgrade for full Question Bank access!
                     </span>
                 ) : remaining === 1 ? (
                     <span>
-                        ⚠️ Only <strong>1 free quiz</strong> remaining. Upgrade for unlimited access.
+                        ⚠️ Only <strong>1 free test</strong> remaining. Upgrade for full Question Bank access.
                     </span>
                 ) : (
                     <span>
-                        You have <strong>{remaining} free quizzes</strong> remaining.
+                        You have <strong>{remaining} free tests</strong> remaining.
                     </span>
                 )}
             </p>

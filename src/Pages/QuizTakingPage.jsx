@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
     submitQuiz,
+    submitSubjectQuiz,
     fetchAttemptDetails,
     selectCurrentQuiz,
     selectQuizLoading,
@@ -19,6 +20,7 @@ function QuizTakingPage() {
     const navigate = useNavigate();
     const location = useLocation();
     const { quizId } = useParams();
+    console.log('QuizTakingPage initialized with quizId/attemptId:', quizId);
     const user = useSelector(selectUser);
     const userProfile = useSelector(selectUserProfile);
 
@@ -146,7 +148,7 @@ function QuizTakingPage() {
 
             dispatch(showNotification({
                 type: 'success',
-                message: 'Quiz submitted successfully!'
+                message: 'Test submitted successfully!'
             }));
 
             localStorage.setItem('quiz_results_direct', JSON.stringify(response.data.result));
@@ -172,8 +174,9 @@ function QuizTakingPage() {
             // Convert option indices to keys (0 -> 'a', 1 -> 'b', etc.)
             const optionKeys = ['a', 'b', 'c', 'd', 'e'];
 
-            // For direct quizzes, calculate score locally
+            // For direct quizzes, calculate score locally (Fallback only)
             if (quizId === 'direct') {
+                console.warn('QuizTakingPage: Submitting in fallback direct mode (Local Only)');
                 let correctCount = 0;
                 const totalQuestions = quiz?.questions?.length || 0;
 
@@ -184,7 +187,6 @@ function QuizTakingPage() {
                     }
                 });
 
-                // Store results in localStorage for the results page
                 const quizResults = {
                     quiz_id: 'direct',
                     total_questions: totalQuestions,
@@ -201,10 +203,9 @@ function QuizTakingPage() {
                 };
 
                 localStorage.setItem('quiz_results_direct', JSON.stringify(quizResults));
-
                 dispatch(showNotification({
                     type: 'success',
-                    message: `Quiz completed! Score: ${correctCount}/${totalQuestions}`
+                    message: `Test completed! Score: ${correctCount}/${totalQuestions}`
                 }));
 
                 navigate(`/quiz/results/direct`);
@@ -213,6 +214,51 @@ function QuizTakingPage() {
 
             // For attempt-based quizzes, submit to API
             const attemptId = quizId;
+            console.log('attemptId:', attemptId);
+            console.log('user_id:', user?.user_id || user?.id);
+            console.log('--- AMC SUBMISSION PREVIEW ---');
+            console.log('Attempt ID:', attemptId);
+            console.log('Submission Body:', {
+                user_id: user?.user_id || user?.id,
+                attempt_id: attemptId,
+                subject_id: quiz?.subject_id,
+                question_type: quiz?.question_type,
+                time_taken_seconds: quiz?.duration ? (quiz.duration * 60 - (timeRemaining || 0)) : 0,
+                answers: Object.entries(answers).map(([questionId, answerIndex]) => ({
+                    question_id: questionId,
+                    selected_key: optionKeys[answerIndex]
+                }))
+            });
+            console.log('---------------------------');
+
+            // Determine if it's an attempt-based quiz (AMC Subject or Chapter)
+            if (quiz?.attempt_id || quiz?.subject_id || location.state?.isSubjectQuiz || location.state?.isChapterQuiz) {
+                const submissionData = {
+                    user_id: user?.user_id || user?.id,
+                    attempt_id: attemptId || quiz?.attempt_id,
+                    subject_id: quiz?.subject_id,
+                    question_type: (quiz?.question_type || 'easy').toLowerCase(),
+                    time_taken_seconds: quiz?.duration ? (quiz.duration * 60 - (timeRemaining || 0)) : 0,
+                    answers: Object.entries(answers).map(([questionId, answerIndex]) => ({
+                        question_id: questionId,
+                        selected_key: optionKeys[answerIndex]
+                    }))
+                };
+
+                console.log('Backend Submission Body:', JSON.stringify(submissionData, null, 2));
+
+                const result = await dispatch(submitSubjectQuiz(submissionData)).unwrap();
+                console.log('AMC Submission Result:', result);
+                
+                dispatch(showNotification({
+                    type: 'success',
+                    message: 'Test submitted successfully!'
+                }));
+
+                // For AMC, the result usually contains the quiz_id/attempt_id
+                navigate(`/quiz/results/${result.attempt_id || attemptId}`);
+                return;
+            }
 
             const submissionData = {
                 user_id: user?.user_id || user?.id,
@@ -276,7 +322,7 @@ function QuizTakingPage() {
 
                 dispatch(showNotification({
                     type: 'success',
-                    message: 'Quiz submitted successfully!'
+                    message: 'Test submitted successfully!'
                 }));
 
                 // Navigate to results page
@@ -312,7 +358,7 @@ function QuizTakingPage() {
             <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-32">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading quiz...</p>
+                    <p className="mt-4 text-gray-600">Loading test...</p>
                 </div>
             </div>
         );
@@ -325,8 +371,8 @@ function QuizTakingPage() {
                     <svg className="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Quiz Not Found</h2>
-                    <p className="text-gray-600 mb-6">{error || 'Unable to load quiz questions'}</p>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Test Not Found</h2>
+                    <p className="text-gray-600 mb-6">{error || 'Unable to load test questions'}</p>
                     <button
                         onClick={() => navigate(-1)}
                         className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
@@ -349,7 +395,7 @@ function QuizTakingPage() {
                 <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 sticky top-24 z-10">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">{quiz.title || 'Quiz'}</h1>
+                            <h1 className="text-2xl font-bold text-gray-900">{quiz.title || 'Test'}</h1>
                             <p className="text-gray-600 mt-1">
                                 Question {currentQuestionIndex + 1} of {totalQuestions}
                             </p>
@@ -442,7 +488,7 @@ function QuizTakingPage() {
                                     disabled={isSubmitting}
                                     className="px-8 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition disabled:opacity-50"
                                 >
-                                    {isSubmitting ? 'Submitting...' : 'Submit Quiz'}
+                                    {isSubmitting ? 'Submitting...' : 'Submit Test'}
                                 </button>
                             ) : (
                                 <button
@@ -515,7 +561,7 @@ function QuizTakingPage() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">Submit Quiz?</h3>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">Submit Test?</h3>
                             <p className="text-gray-600 mb-6">
                                 Are you sure you want to submit?
                             </p>

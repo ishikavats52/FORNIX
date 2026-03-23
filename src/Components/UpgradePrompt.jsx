@@ -82,8 +82,8 @@ function UpgradePrompt({ isOpen, onClose, feature = 'quiz', courseId }) {
 
     const messages = {
         quiz: {
-            title: '🎯 Free Quiz Limit Reached',
-            description: "You've used all 2 free quiz attempts. Upgrade to unlock unlimited quizzes, mock tests, full notes and more.",
+            title: '🎯 Free Test Limit Reached',
+            description: "You've used all 2 free test attempts. Upgrade to unlock full question bank, mock tests, full notes and more.",
         },
         mock_test: {
             title: '🔒 Premium Feature',

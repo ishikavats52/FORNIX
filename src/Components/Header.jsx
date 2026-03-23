@@ -42,10 +42,10 @@ function Header() {
 
   const courses = [
     { to: '/courses/amc', label: 'AMC' },
-    { to: '/courses/neet-ug', label: 'NEET UG' },
-    { to: '/courses/neet-pg', label: 'NEET PG' },
+    // { to: '/courses/neet-ug', label: 'NEET UG' },
+    // { to: '/courses/neet-pg', label: 'NEET PG' },
     { to: '/courses/FMGE', label: 'FMGE' },
-    { to: '/courses/PLAB1', label: 'PLAB1' },
+    { to: '/courses/plab', label: 'PLAB' },
   ];
 
   return (
@@ -55,8 +55,8 @@ function Header() {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <img src={logo} alt="Fornix Logo" className="w-20 h-20 rounded-full object-cover" />
-            <span className="text-2xl font-bold text-gray-800">FORNIX</span>
+            <img src={logo} alt="Fornix Logo" className="w-30 h-20 p-0 m-0 mr-10 rounded-full object-cover" />
+            {/* <span className="text-2xl font-bold text-gray-800">FORNIX</span> */}
           </Link>
 
           {/* Desktop Navigation */}
@@ -109,7 +109,7 @@ function Header() {
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
                 </Link>
               </li>
-             
+
 
             </ul>
           </nav>

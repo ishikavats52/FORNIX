@@ -13,7 +13,7 @@ import {
 import { selectUser } from '../redux/slices/authSlice';
 import { selectUserProfile, fetchUserDetails } from '../redux/slices/userSlice';
 import PDFViewerModal from '../Components/PDFViewerModal';
-import MixedQuizModal from '../Components/MixedQuizModal';
+import ChapterQuizModal from '../Components/ChapterQuizModal';
 import UpgradePrompt from '../Components/UpgradePrompt';
 import QuizAttemptsCounter from '../Components/QuizAttemptsCounter';
 import { canAttemptQuiz, getUsedQuizAttempts, hasExceededQuizLimit, getNoteType } from '../utils/accessControl';
@@ -136,7 +136,7 @@ function ChaptersPage() {
                 <div className="mb-8 flex md:items-center justify-between flex-col md:flex-row gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900">Study Content</h1>
-                        <p className="text-gray-600 mt-2">Access notes and quizzes for this subject</p>
+                        <p className="text-gray-600 mt-2">Access notes and question bank for this subject</p>
                     </div>
 
                     {/* Quiz Attempts Counter for Free Users */}
@@ -154,24 +154,31 @@ function ChaptersPage() {
                 <div className="flex gap-6 mb-8 border-b border-gray-200">
                     <button
                         onClick={() => setActiveTab('notes')}
-                        className={`pb-3 px-2 font-bold text-lg transition-all relative ${activeTab === 'notes'
-                            ? 'text-orange-600'
-                            : 'text-gray-500 hover:text-gray-700'
+                        className={`pb-3 px-2 font-bold text-lg transition-all relative flex items-center gap-2 ${activeTab === 'notes'
+                            ? 'text-orange-500'
+                            : 'text-gray-400 hover:text-gray-600'
                             }`}
                     >
-                        📚 Notes
+                        <svg className={`w-5 h-5 transition-colors ${activeTab === 'notes' ? 'text-orange-500' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Study Notes
                         {activeTab === 'notes' && (
                             <span className="absolute bottom-0 left-0 w-full h-1 bg-orange-600 rounded-t-full"></span>
                         )}
                     </button>
                     <button
                         onClick={() => setActiveTab('quizzes')}
-                        className={`pb-3 px-2 font-bold text-lg transition-all relative ${activeTab === 'quizzes'
-                            ? 'text-orange-600'
-                            : 'text-gray-500 hover:text-gray-700'
+                        className={`pb-3 px-2 font-bold text-lg transition-all relative flex items-center gap-2 ${activeTab === 'quizzes'
+                            ? 'text-orange-500'
+                            : 'text-gray-400 hover:text-gray-600'
                             }`}
                     >
-                        📝 Quizzes
+                        <svg className={`w-5 h-5 transition-colors ${activeTab === 'quizzes' ? 'text-orange-500' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a2 2 0 00-1.96 1.414l-.726 2.179a2 2 0 01-1.96 1.414H8a2 2 0 01-1.96-1.414l-.726-2.179a2 2 0 00-1.96-1.414l-2.387.477a2 2 0 00-1.022.547l-1.16 1.16a2 2 0 01-2.828 0l-3.374-3.374a2 2 0 010-2.828l1.16-1.16a2 2 0 00.547-1.022l.477-2.387a2 2 0 00-1.414-1.96L.841 7.234a2 2 0 01-1.414-1.96V4a2 2 0 011.414-1.96l2.179-.726a2 2 0 001.414-1.96l-.477-2.387a2 2 0 00.547-1.022l1.16-1.16a2 2 0 012.828 0l3.374 3.374a2 2 0 010 2.828l-1.16 1.16a2 2 0 00-.547-1.022l-.477-2.387a2 2 0 001.414-1.96l.726-2.179a2 2 0 011.96-1.414H16a2 2 0 011.96 1.414l.726 2.179a2 2 0 001.96 1.414l2.387-.477a2 2 0 001.022-.547l1.16-1.16a2 2 0 012.828 0l3.374 3.374a2 2 0 010 2.828l-1.16 1.16z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        Question Bank
                         {activeTab === 'quizzes' && (
                             <span className="absolute bottom-0 left-0 w-full h-1 bg-orange-600 rounded-t-full"></span>
                         )}
@@ -231,7 +238,7 @@ function ChaptersPage() {
                                 onClick={() => handleQuizNavigation(`/quiz/start?multiChapterIds=${selectedChapters.join(',')}`)}
                                 className="px-6 py-3 bg-orange-600 text-white font-bold rounded-xl shadow-lg hover:bg-orange-700 hover:shadow-xl transition-all hover:scale-105 flex items-center gap-2"
                             >
-                                ⚡ Start Bulk Quiz
+                                ⚡ Start Bulk Test
                             </button>
                         </div>
                     </div>
@@ -259,7 +266,7 @@ function ChapterAccordion({ chapter, activeTab, isOpen, onToggle, isSelected, on
     const topicsData = useSelector(selectTopicsForChapter(chapter.id));
     const chapterTopics = topicsData.topics;
 
-    const [isMixedQuizModalOpen, setMixedQuizModalOpen] = useState(false);
+    const [isChapterQuizModalOpen, setChapterQuizModalOpen] = useState(false);
 
     return (
         <div className="border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-md bg-white">
@@ -337,59 +344,45 @@ function ChapterAccordion({ chapter, activeTab, isOpen, onToggle, isSelected, on
                     {/* QUIZZES / TOPICS VIEW */}
                     {activeTab === 'quizzes' && (
                         <div>
-                            <div className="flex justify-between items-center mb-4">
-                                <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Available Topics</p>
-                                <div className="flex gap-3">
-                                    <button
-                                        onClick={() => setMixedQuizModalOpen(true)}
-                                        className="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-bold rounded-lg hover:bg-purple-200 transition-colors"
-                                    >
-                                        ⚡ Chapter Quiz
-                                    </button>
-                                    {/* <button
-                                        onClick={() => onQuizNavigate(`/quiz/start?chapterId=${chapter.id}`)}
-                                        className="text-orange-600 text-sm font-bold hover:underline"
-                                    >
-                                        Take Full Chapter Quiz
-                                    </button> */}
-                                </div>
+                            <div className={`flex ${chapterTopics.length > 0 ? 'justify-between' : 'justify-center'} items-center mb-6 py-2`}>
+                                {chapterTopics.length > 0 && (
+                                    <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Available Topics</p>
+                                )}
+                                <button
+                                    onClick={() => setChapterQuizModalOpen(true)}
+                                    className={`flex items-center gap-2 group transition-all duration-300 ${chapterTopics.length > 0
+                                        ? 'px-4 py-2 bg-orange-100 text-orange-700 hover:bg-orange-500 hover:text-white'
+                                        : 'px-8 py-4 bg-orange-500 text-white hover:bg-orange-600 scale-110 shadow-lg hover:shadow-orange-200'
+                                        } rounded-xl font-bold text-sm md:text-base`}
+                                >
+                                    <span className={`text-lg transition-transform group-hover:rotate-12 ${chapterTopics.length === 0 ? 'text-2xl' : ''}`}>⚡</span>
+                                    {chapterTopics.length > 0 ? 'Chapter Test' : 'Take Chapter Test'}
+                                </button>
                             </div>
 
-                            {chapterTopics.length > 0 ? (
-                                <div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                        {chapterTopics.map((topic) => (
-                                            <div
-                                                key={topic.id}
-                                                className="p-4 border border-gray-100 rounded-xl hover:border-orange-300 hover:shadow-md transition-all cursor-pointer flex justify-between items-center group"
-                                                onClick={() => onQuizNavigate(`/quiz/start?topicIds=${topic.id}`)}
-                                            >
-                                                <span className="font-medium text-gray-700 group-hover:text-orange-700">{topic.name}</span>
-                                                <div className="w-8 h-8 rounded-full bg-gray-50 group-hover:bg-orange-100 flex items-center justify-center text-gray-400 group-hover:text-orange-500 transition-colors">
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                                    </svg>
-                                                </div>
+                            {chapterTopics.length > 0 && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {chapterTopics.map((topic) => (
+                                        <div
+                                            key={topic.id}
+                                            className="p-4 border border-gray-100 rounded-xl hover:border-orange-300 hover:shadow-md transition-all cursor-pointer flex justify-between items-center group bg-gray-50/30"
+                                            onClick={() => onQuizNavigate(`/quiz/start?topicIds=${topic.id}`)}
+                                        >
+                                            <span className="font-medium text-gray-700 group-hover:text-orange-700">{topic.name}</span>
+                                            <div className="w-8 h-8 rounded-full bg-white border border-gray-100 group-hover:bg-orange-500 group-hover:border-orange-500 flex items-center justify-center text-gray-300 group-hover:text-white transition-all">
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                                </svg>
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-                                    <p className="text-gray-500 italic">No specific topics found, but you can still take a Full or Mixed Quiz.</p>
+                                        </div>
+                                    ))}
                                 </div>
                             )}
 
-                            <MixedQuizModal
-                                isOpen={isMixedQuizModalOpen}
-                                onClose={() => setMixedQuizModalOpen(false)}
-                                chapterId={chapter.id}
-                                chapterName={chapter.name}
-                                courseId={courseId}
-                                onAccessDenied={() => {
-                                    setMixedQuizModalOpen(false);
-                                    onQuizNavigate('/'); // This will trigger the upgrade prompt
-                                }}
+                            <ChapterQuizModal
+                                isOpen={isChapterQuizModalOpen}
+                                onClose={() => setChapterQuizModalOpen(false)}
+                                chapter={chapter}
                             />
                         </div>
                     )}

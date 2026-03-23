@@ -18,19 +18,35 @@ const Leaderboard = ({ rankings, userRank, totalUsers, loading, limit }) => {
                     </svg>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No Rankings Yet</h3>
-                <p className="text-gray-500">Complete quizzes to see your ranking!</p>
+                <p className="text-gray-500">Complete tests to see your ranking!</p>
             </div>
         );
     }
 
     const getMedalIcon = (rank) => {
+        const medalProps = { className: "w-6 h-6 drop-shadow-sm" };
         switch (rank) {
             case 1:
-                return '🥇';
+                return (
+                    <svg {...medalProps} viewBox="0 0 24 24" fill="none">
+                        <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" fill="#FBBF24"/>
+                        <path d="M12 2L14.802 6.634L19.947 7.836L16.511 11.77L16.944 17.062L12 15L7.056 17.062L7.489 11.77L4.053 7.836L9.198 6.634L12 2Z" stroke="#FBBF24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                );
             case 2:
-                return '🥈';
+                return (
+                    <svg {...medalProps} viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="8" stroke="#94A3B8" strokeWidth="2"/>
+                        <path d="M12 8V16M8 12H16" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                );
             case 3:
-                return '🥉';
+                return (
+                    <svg {...medalProps} viewBox="0 0 24 24" fill="none">
+                        <path d="M12 15L15 18H9L12 15Z" fill="#B45309" stroke="#B45309" strokeWidth="2"/>
+                        <circle cx="12" cy="10" r="5" stroke="#B45309" strokeWidth="2"/>
+                    </svg>
+                );
             default:
                 return null;
         }
@@ -87,9 +103,14 @@ const Leaderboard = ({ rankings, userRank, totalUsers, loading, limit }) => {
                                 }`}
                         >
                             <div className="flex items-center gap-4">
-                                {/* Rank */}
-                                <div className={`w-12 h-12 bg-gradient-to-br ${getRankColor(rank)} rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 shadow-lg`}>
-                                    {medal || `#${rank}`}
+                                {/* Rank with Glow Effects */}
+                                <div className="relative">
+                                    {rank <= 3 && (
+                                        <div className={`absolute inset-0 blur-xl opacity-40 rounded-full bg-gradient-to-br ${getRankColor(rank)}`}></div>
+                                    )}
+                                    <div className={`relative w-12 h-12 bg-gradient-to-br ${getRankColor(rank)} rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 shadow-lg border-2 border-white/20`}>
+                                        {medal || `#${rank}`}
+                                    </div>
                                 </div>
 
                                 {/* User Info */}
@@ -110,7 +131,7 @@ const Leaderboard = ({ rankings, userRank, totalUsers, loading, limit }) => {
                                         </p>
                                         {user.quizzes_completed && (
                                             <p className="text-sm text-gray-500">
-                                                {user.quizzes_completed} quiz{user.quizzes_completed !== 1 ? 'zes' : ''}
+                                                {user.quizzes_completed} test{user.quizzes_completed !== 1 ? 's' : ''}
                                             </p>
                                         )}
                                     </div>

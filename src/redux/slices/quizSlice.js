@@ -50,6 +50,58 @@ export const submitQuiz = createAsyncThunk(
   }
 );
 
+export const startSubjectQuiz = createAsyncThunk(
+  'quiz/startSubject',
+  async (quizConfig, { rejectWithValue, getState }) => {
+    try {
+      const state = getState();
+      let user_id = quizConfig.user_id;
+      if (!user_id) {
+        user_id = state.auth.user?.user_id || state.auth.user?.id || state.auth.user?.uuid;
+      }
+
+      const dataToSend = {
+        user_id,
+        subject_id: quizConfig.subject_id,
+        question_type: quizConfig.question_type.toLowerCase() || 'easy',
+        limit: quizConfig.limit || 20
+      };
+
+      const response = await API.post('/subject-quiz/start', dataToSend);
+      console.log('--- SUBJECT QUIZ START API RESPONSE ---');
+      console.log(response.data);
+      console.log('---------------------------------------');
+      // Backend returns: { success, attempt: { id, started_at, ... }, questions: [] }
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to start subject quiz');
+    }
+  }
+);
+
+export const submitSubjectQuiz = createAsyncThunk(
+  'quiz/submitSubject',
+  async (submissionData, { rejectWithValue, getState }) => {
+    try {
+      const state = getState();
+      let user_id = submissionData.user_id;
+      if (!user_id) {
+        user_id = state.auth.user?.user_id || state.auth.user?.id || state.auth.user?.uuid;
+      }
+      
+      const dataToSend = {
+        ...submissionData,
+        user_id
+      };
+      
+      const response = await API.post('/subject-quiz/submit', dataToSend);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to submit subject quiz');
+    }
+  }
+);
+
 export const resetQuiz = createAsyncThunk(
   'quiz/reset',
   async (resetData, { rejectWithValue, getState }) => {
@@ -86,6 +138,9 @@ export const fetchQuizHistory = createAsyncThunk(
       }
       
       const response = await API.post('/quiz-history', { user_id });
+      console.log('--- QUIZ HISTORY API RESPONSE ---');
+      console.log(response.data);
+      console.log('-------------------------------');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Failed to fetch quiz history');
@@ -134,7 +189,10 @@ export const fetchAttemptDetails = createAsyncThunk(
         user_id
       };
       
-      const response = await API.post('/quiz/attempt/details', dataToSend);
+      const response = await API.post('/quiz-attempt/details', dataToSend);
+      console.log('--- ATTEMPT DETAILS API RESPONSE ---');
+      console.log(response.data);
+      console.log('------------------------------------');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Failed to fetch attempt details');
@@ -178,20 +236,26 @@ export const fetchChapterQuiz = createAsyncThunk(
   'quiz/fetchChapterQuiz',
   async (quizData, { rejectWithValue, getState }) => {
     try {
+      // Use new endpoint: /amc/chapter-quiz
+      // Body should be: { chapter_id, limit, user_id, question_type }
       const state = getState();
-      // Ensure user_id is set - could be 'id', 'user_id', or 'uuid'
-      let user_id = quizData.user_id;
-      if (!user_id) {
-        user_id = state.auth.user?.user_id || state.auth.user?.id || state.auth.user?.uuid;
-      }
+      const user_id = quizData.user_id || state.auth.user?.user_id || state.auth.user?.id || state.auth.user?.uuid;
       
       const dataToSend = {
-        ...quizData,
-        user_id
+        chapter_id: quizData.chapter_id,
+        limit: quizData.limit || 15,
+        user_id,
+        question_type: (quizData.question_type || 'easy').toLowerCase()
       };
       
+      console.log('--- CHAPTER QUIZ START API REQUEST ---');
+      console.log('Payload:', dataToSend);
+      console.log('---------------------------------------');
 
-      const response = await API.post(`/chapter-quizzes`, dataToSend);
+      const response = await API.post(`/amc/chapter-quiz`, dataToSend);
+      console.log('--- CHAPTER QUIZ START API RESPONSE (RAW) ---');
+      console.log(response.data);
+      console.log('----------------------------------------------');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Failed to fetch chapter quiz');
@@ -402,6 +466,51 @@ const quizSlice = createSlice({
         state.error = action.payload;
       })
       
+      // Submit subject quiz
+      .addCase(submitSubjectQuiz.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(submitSubjectQuiz.fulfilled, (state, action) => {
+        state.loading = false;
+        state.quizResult = action.payload;
+        state.currentQuiz = null;
+      })
+      .addCase(submitSubjectQuiz.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // Start subject quiz
+      .addCase(startSubjectQuiz.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(startSubjectQuiz.fulfilled, (state, action) => {
+        state.loading = false;
+        // The API returns questions in action.payload.questions (array)
+        const transformedQuiz = {
+          ...action.payload,
+          subject_id: action.payload.subject_id || action.payload.attempt?.subject_id,
+          question_type: action.payload.question_type || action.payload.attempt?.question_type,
+          questions: action.payload.questions?.map(q => ({
+            ...q,
+            id: q.id || q.question_id,
+            question: q.question_text || q.question,
+            options: q.options || [],
+            correct_answer: q.correct_answer,
+            explanation: q.explanation,
+            male_explanation_audio_url: q.male_explanation_audio_url,
+            female_explanation_audio_url: q.female_explanation_audio_url,
+          })) || []
+        };
+        state.currentQuiz = transformedQuiz;
+      })
+      .addCase(startSubjectQuiz.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
       // Reset quiz
       .addCase(resetQuiz.pending, (state) => {
         state.loading = true;
@@ -422,7 +531,7 @@ const quizSlice = createSlice({
       })
       .addCase(fetchQuizHistory.fulfilled, (state, action) => {
         state.loading = false;
-        state.history = action.payload;
+        state.history = action.payload.data || action.payload;
       })
       .addCase(fetchQuizHistory.rejected, (state, action) => {
         state.loading = false;
@@ -482,19 +591,26 @@ const quizSlice = createSlice({
       })
       .addCase(fetchChapterQuiz.fulfilled, (state, action) => {
         state.loading = false;
-        // Transform API response to match expected format
+        // The new API response format: { success, attempt_id, total, data: [...] }
         const transformedQuiz = {
           ...action.payload,
+          id: action.payload.attempt_id, // Important: Store attempt_id as the quiz ID
+          attempt_id: action.payload.attempt_id,
           questions: action.payload.data?.map(q => ({
-            id: q.id,
-            question: q.question_text,
-            options: q.options?.map(opt => opt.content) || [],
+            ...q,
+            id: q.id || q.question_id,
+            question: q.question_text || q.question,
+            options: q.options || [], // Preserve objects with option_key and content
             correct_answer: q.correct_answer,
             explanation: q.explanation,
+            explanation_audio_urls: q.explanation_audio_urls,
             question_type: q.question_type,
             question_image_url: q.question_image_url
           })) || []
         };
+        console.log('--- CHAPTER QUIZ TRANSFORMED ---');
+        console.log(transformedQuiz);
+        console.log('-------------------------------');
         state.currentQuiz = transformedQuiz;
       })
       .addCase(fetchChapterQuiz.rejected, (state, action) => {
@@ -513,9 +629,12 @@ const quizSlice = createSlice({
         const transformedQuiz = {
           ...action.payload,
           questions: action.payload.data?.map(q => ({
+            ...q,
             id: q.id,
+            male_explanation_audio_url: q.male_explanation_audio_url,
+            female_explanation_audio_url: q.female_explanation_audio_url,
             question: q.question_text,
-            options: q.options?.map(opt => opt.content) || [],
+            options: q.options || [],
             correct_answer: q.correct_answer,
             explanation: q.explanation,
             question_type: q.question_type,
@@ -540,9 +659,12 @@ const quizSlice = createSlice({
         const transformedQuiz = {
           ...action.payload,
           questions: action.payload.data?.map(q => ({
+            ...q,
             id: q.id,
+            male_explanation_audio_url: q.male_explanation_audio_url,
+            female_explanation_audio_url: q.female_explanation_audio_url,
             question: q.question_text,
-            options: q.options?.map(opt => opt.content) || [],
+            options: q.options || [],
             correct_answer: q.correct_answer,
             explanation: q.explanation,
             question_type: q.question_type,
@@ -569,7 +691,7 @@ const quizSlice = createSlice({
           questions: action.payload.data?.map(q => ({
             id: q.id,
             question: q.question_text,
-            options: q.options?.map(opt => opt.content) || [],
+            options: q.options || [],
             correct_answer: q.correct_answer,
             explanation: q.explanation,
             question_type: q.question_type,

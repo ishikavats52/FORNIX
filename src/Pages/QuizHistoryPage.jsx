@@ -26,10 +26,18 @@ function QuizHistoryPage() {
     useEffect(() => {
         // Get user_id from user object - could be 'user_id', 'id', or 'uuid'
         const userId = user?.user_id || user?.id || user?.uuid;
+        console.log('QuizHistoryPage: userId detected:', userId);
         if (userId) {
+            console.log('QuizHistoryPage: Fetching history for userId:', userId);
             dispatch(fetchQuizHistory(userId));
+        } else {
+            console.warn('QuizHistoryPage: No userId available for fetchQuizHistory');
         }
     }, [dispatch, user]);
+
+    useEffect(() => {
+        console.log('QuizHistoryPage: Current quizHistory in state:', quizHistory);
+    }, [quizHistory]);
 
     const handleResetQuiz = async (chapterId, quizTitle) => {
         try {
@@ -106,8 +114,8 @@ function QuizHistoryPage() {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Quiz History</h1>
-                    <p className="text-gray-600">Track your progress and review past quizzes</p>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Test History</h1>
+                    <p className="text-gray-600">Track your progress and review past tests</p>
                 </div>
 
                 {/* Filters */}
@@ -157,13 +165,13 @@ function QuizHistoryPage() {
                         <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2">No Quiz History</h3>
-                        <p className="text-gray-600 mb-6">You haven't taken any quizzes yet</p>
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">No Test History</h3>
+                        <p className="text-gray-600 mb-6">You haven't taken any tests yet</p>
                         <button
                             onClick={() => navigate('/courses')}
                             className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
                         >
-                            Start Your First Quiz
+                            Start Your First Test
                         </button>
                     </div>
                 ) : (
@@ -184,7 +192,7 @@ function QuizHistoryPage() {
                                             onClick={() => navigate(`/quiz/results/${quiz.id}`)}
                                         >
                                             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                                                {quiz.quiz_title || quiz.title || 'Quiz'}
+                                                {quiz.quiz_title || quiz.title || 'Test'}
                                             </h3>
                                             <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                                                 {quiz.course_name && (
@@ -230,7 +238,7 @@ function QuizHistoryPage() {
                                                         setResetDialog({
                                                             open: true,
                                                             chapterId: quiz.chapter_id,
-                                                            quizTitle: quiz.quiz_title || quiz.title || 'Quiz'
+                                                            quizTitle: quiz.quiz_title || quiz.title || 'Test'
                                                         });
                                                     }}
                                                     className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm font-semibold"
@@ -251,7 +259,7 @@ function QuizHistoryPage() {
                 {resetDialog.open && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                         <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md mx-4">
-                            <h3 className="text-2xl font-bold text-gray-900 mb-4">Reset Quiz Progress?</h3>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-4">Reset Test Progress?</h3>
                             <p className="text-gray-600 mb-6">
                                 Are you sure you want to reset your progress for <strong>"{resetDialog.quizTitle}"</strong>?
                                 This action cannot be undone.

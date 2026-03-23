@@ -91,7 +91,7 @@ function AMCSubjectPage() {
                 <div className="mb-8 flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900">Study Content</h1>
-                        <p className="text-gray-600 mt-2">Access all notes and quizzes for this subject</p>
+                        <p className="text-gray-600 mt-2">Access all notes and question bank for this subject</p>
                     </div>
                     <button
                         onClick={() => navigate('/courses/amc')}
@@ -105,21 +105,27 @@ function AMCSubjectPage() {
                 <div className="flex gap-4 mb-8 border-b border-gray-200">
                     <button
                         onClick={() => setActiveTab('notes')}
-                        className={`pb-3 px-1 font-bold text-lg transition-all ${activeTab === 'notes'
-                            ? 'text-purple-600 border-b-2 border-purple-600'
-                            : 'text-gray-500 hover:text-gray-700'
+                        className={`pb-3 px-1 font-bold text-lg transition-all flex items-center gap-2 ${activeTab === 'notes'
+                            ? 'text-orange-500 border-b-2 border-orange-500'
+                            : 'text-gray-400 hover:text-gray-600'
                             }`}
                     >
-                        📚 Notes
+                        <svg className={`w-5 h-5 ${activeTab === 'notes' ? 'text-orange-500' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Study Notes
                     </button>
                     <button
                         onClick={() => setActiveTab('quizzes')}
-                        className={`pb-3 px-1 font-bold text-lg transition-all ${activeTab === 'quizzes'
-                            ? 'text-purple-600 border-b-2 border-purple-600'
-                            : 'text-gray-500 hover:text-gray-700'
+                        className={`pb-3 px-1 font-bold text-lg transition-all flex items-center gap-2 ${activeTab === 'quizzes'
+                            ? 'text-orange-500 border-b-2 border-orange-500'
+                            : 'text-gray-400 hover:text-gray-600'
                             }`}
                     >
-                        📝 Quizzes
+                        <svg className={`w-5 h-5 ${activeTab === 'quizzes' ? 'text-orange-500' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                        </svg>
+                        Question Bank
                     </button>
                 </div>
 
@@ -373,7 +379,7 @@ function ChapterContentSection({ chapter, type, isOpen, onToggle, onOpenPdf }) {
                     {!showNotes && (
                         <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-100">
                             <div>
-                                <h4 className="font-bold text-gray-800">Chapter Quiz</h4>
+                                <h4 className="font-bold text-gray-800">Chapter Test</h4>
                                 <p className="text-sm text-gray-600">Test your knowledge on {chapter.name}</p>
                             </div>
                             <button
@@ -383,7 +389,7 @@ function ChapterContentSection({ chapter, type, isOpen, onToggle, onOpenPdf }) {
                                 }}
                                 className="bg-purple-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-purple-700 transition shadow-sm"
                             >
-                                Start Quiz
+                                Start Test
                             </button>
                         </div>
                     )}

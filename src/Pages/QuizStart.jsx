@@ -56,7 +56,7 @@ function QuizStart() {
       dispatch(
         showNotification({
           type: "warning",
-          message: "Please login to start a quiz",
+          message: "Please login to start a test",
         }),
       );
       navigate("/login");
@@ -91,8 +91,7 @@ function QuizStart() {
         result = await dispatch(
           fetchChapterQuiz({
             chapter_id: chapterId,
-            question_type: quizConfig.questionType,
-            limit: quizConfig.limit,
+            question_type: quizConfig.questionType.toLowerCase()
           }),
         ).unwrap();
       } else if (topicIds) {
@@ -119,7 +118,7 @@ function QuizStart() {
         dispatch(
           showNotification({
             type: "info",
-            message: "Please select a course, chapter, or topic to start a quiz",
+            message: "Please select a course, chapter, or topic to start a test",
           }),
         );
         navigate("/courses");
@@ -151,7 +150,7 @@ function QuizStart() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-xl shadow-md p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">
-            {multiChapterIds ? "Configure Bulk Details" : "Configure Your Quiz"}
+            {multiChapterIds ? "Configure Bulk Details" : "Configure Your Test"}
           </h1>
 
           <div className="space-y-6">
@@ -203,7 +202,7 @@ function QuizStart() {
             {/* Quiz Info */}
             <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
               <h3 className="font-semibold text-blue-900 mb-2">
-                Quiz Information
+                Test Information
               </h3>
               <ul className="text-sm text-blue-800 space-y-1">
                 <li>• {quizConfig.limit} questions will be presented</li>
@@ -219,7 +218,7 @@ function QuizStart() {
               disabled={loading}
               className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition disabled:opacity-50"
             >
-              {loading ? "Starting Quiz..." : "Start Quiz"}
+              {loading ? "Starting Test..." : "Start Test"}
             </button>
 
             <button

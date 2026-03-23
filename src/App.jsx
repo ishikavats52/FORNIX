@@ -28,7 +28,7 @@ import NeetUg from '../src/Pages/NeetUG.jsx';
 import NeetPg from '../src/Pages/NeetPg.jsx';
 import ProtectedRoute from './Components/ProtectedRoute.jsx';
 import NotificationContainer from './Components/NotificationContainer.jsx';
-import Plab1 from '../src/Pages/PLAB1.JSX';
+import PLAB from '../src/Pages/PLAB.jsx';
 import FMGE from '../src/Pages/FMGE.jsx';
 import PricingPage from '../src/Pages/PricingPage.jsx';
 import PYTSubjects from '../src/Pages/PYTSubjects.jsx';
@@ -203,10 +203,8 @@ useEffect(() => {
             <NeetPg />
           </ProtectedRoute>
         } />
-        <Route path="/courses/plab1" element={
-          <ProtectedRoute>
-            <Plab1 />
-          </ProtectedRoute>
+        <Route path="/courses/plab" element={
+            <PLAB />
         } />
         <Route path="/courses/FMGE" element={
           <ProtectedRoute>

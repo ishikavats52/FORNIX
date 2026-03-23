@@ -10,7 +10,7 @@ function Home() {
     { value: "5000+", label: "Students Enrolled" },
     { value: "4000+", label: "Qualified Doctors" },
     { value: "100+", label: "Expert Faculty" },
-    { value: "90%", label: "Success Rate" }
+    { value: "70,000+", label: "Questions Bank" }
   ];
 
   const courses = [
@@ -18,7 +18,7 @@ function Home() {
     { title: "NEET PG", path: "/courses/neet-pg", color: "bg-green-500", desc: "Advanced concepts for postgraduate aspirants." },
     { title: "AMC", path: "/courses/amc", color: "bg-purple-500", desc: "Australian Medical Council exam preparation." },
     { title: "FMGE", path: "/courses/FMGE", color: "bg-red-500", desc: "Foreign Medical Graduate Examination mastery." },
-    { title: "PLAB 1", path: "/courses/PLAB1", color: "bg-yellow-500", desc: "Your gateway to UK medical practice." }
+    { title: "PLAB", path: "/courses/PLAB", color: "bg-yellow-500", desc: "Your gateway to UK medical practice." }
   ];
 
   const testimonials = [
@@ -29,7 +29,7 @@ function Home() {
 
   const faqs = [
     { q: "Can I access the courses on mobile?", a: "Yes! Our platform is fully responsive and optimized for mobile learning." },
-    { q: "Is there a free trial?", a: "We offer free demo subjects and quizzes so you can try before you buy." },
+    { q: "Is there a free trial?", a: "We offer free demo subjects and practice tests so you can try before you buy." },
     { q: "How often is content updated?", a: "Our medical board updates content weekly to align with the latest exam patterns." },
     { q: "What happens if I get stuck?", a: "Premium members get access to 24/7 doubt resolution with expert faculty." }
   ];
@@ -112,9 +112,9 @@ function Home() {
               aria-label="Telegram"
             >
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-               
-               <path d="M23.91 3.79L20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72 0-.6-.27-.84-.95L6.3 13.7l-5.45-1.7c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z" />
-              
+
+                <path d="M23.91 3.79L20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72 0-.6-.27-.84-.95L6.3 13.7l-5.45-1.7c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z" />
+
               </svg>
             </a>
           </div>
@@ -147,7 +147,11 @@ function Home() {
               {
                 title: "Clinically Oriented",
                 desc: "Learn with case-based scenarios that mirror real-world practice.",
-                icon: "🩺",
+                icon: (
+                  <svg className="w-12 h-12 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                  </svg>
+                ),
                 details: [
                   "Real patient case studies from top medical institutions",
                   "Clinical reasoning frameworks used by expert physicians",
@@ -158,7 +162,11 @@ function Home() {
               {
                 title: "High-Yield QBank",
                 desc: "7000+ questions curated to test high-probability exam topics.",
-                icon: "📘",
+                icon: (
+                  <svg className="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                ),
                 details: [
                   "Questions written by very experienced doctors",
                   "Detailed explanations for every answer choice",
@@ -169,7 +177,11 @@ function Home() {
               {
                 title: "Smart Analytics",
                 desc: "Track your weak spots with our AI-driven performance dashboard.",
-                icon: "📊",
+                icon: (
+                  <svg className="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                ),
                 details: [
                   "AI-powered weak area identification",
                   "Personalized study recommendations",
@@ -180,7 +192,11 @@ function Home() {
               {
                 title: "Audio Podcasts",
                 desc: "High-yield medical audio content for learning anytime, anywhere.",
-                icon: "🎧",
+                icon: (
+                  <svg className="w-12 h-12 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                  </svg>
+                ),
                 details: [
                   "Expert-narrated topic summaries",
                   "Perfect for commute or workout sessions",
@@ -190,7 +206,11 @@ function Home() {
               {
                 title: "24/7 Chatbot Support",
                 desc: "Get instant answers to your medical queries round the clock.",
-                icon: "🤖",
+                icon: (
+                  <svg className="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  </svg>
+                ),
                 details: [
                   "AI-powered instant doubt resolution",
                   "Access to medical knowledge database",
@@ -201,7 +221,11 @@ function Home() {
               {
                 title: "Smart Revision",
                 desc: "Revise smart. Perform better with spaced repetition.",
-                icon: "🧠",
+                icon: (
+                  <svg className="w-12 h-12 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                ),
                 details: [
                   "Scientifically-proven spaced repetition algorithm",
                   "Flashcards for quick revision",
@@ -217,7 +241,7 @@ function Home() {
               >
                 <div className="p-8">
                   <div className="flex items-start justify-between">
-                    <div className="text-5xl mb-4">{item.icon}</div>
+                    <div className="mb-4">{item.icon}</div>
                     <svg
                       className={`w-6 h-6 text-orange-500 transition-transform duration-300 ${flippedCards[index] ? 'rotate-180' : ''}`}
                       fill="none"

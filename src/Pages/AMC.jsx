@@ -46,6 +46,7 @@ import {
 import { selectPlans, fetchEnrolledCourses } from '../redux/slices/coursesSlice';
 import UpgradePrompt from '../Components/UpgradePrompt';
 import { canAccessCourse } from '../utils/accessControl';
+import SubjectQuizModal from '../Components/SubjectQuizModal';
 
 const isValidUUID = (value) =>
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
@@ -76,6 +77,8 @@ function AMC() {
   const [selectedPodcastSubject, setSelectedPodcastSubject] = useState(null);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState('course_access');
+  const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
+  const [selectedSubjectQuiz, setSelectedSubjectQuiz] = useState(null);
   const pricingSectionRef = React.useRef(null);
 
   // AMC Course ID found from API
@@ -246,6 +249,17 @@ function AMC() {
     }
     dispatch(setSelectedSubject(subject));
     navigate(`/subjects/${subject.id}/chapters`, { state: { courseId: COURSE_ID } });
+  };
+
+  const handlePracticeClick = (e, subject) => {
+    e.stopPropagation(); // Don't trigger subject click (chapter navigation)
+    if (!canAccessCourse(activeUser, COURSE_ID)) {
+      setUpgradeFeature('course_access');
+      setShowUpgradePrompt(true);
+      return;
+    }
+    setSelectedSubjectQuiz(subject);
+    setIsSubjectModalOpen(true);
   };
 
   const handlePodcastSubjectClick = async (subject) => {
@@ -891,17 +905,36 @@ function AMC() {
                     {subject.description || 'Comprehensive study modules covering key concepts and problem-solving techniques.'}
                   </p>
 
-                  <div className="flex items-center text-purple-600 font-bold text-sm group-hover:translate-x-1 transition-transform">
-                    {!canAccessCourse(activeUser, COURSE_ID) ? 'Unlock to Access' : 'Start Learning'}
-                    <svg className="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </div>
+                  {/* <div className="flex items-center justify-between gap-3">
+                    <div 
+                      className="flex items-center text-purple-600 font-bold text-sm group-hover:translate-x-1 transition-transform"
+                    >
+                      {!canAccessCourse(activeUser, COURSE_ID) ? 'Unlock to Access' : 'Start Learning'}
+                      <svg className="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </div>
+
+                    {canAccessCourse(activeUser, COURSE_ID) && (
+                      // <button
+                      //   onClick={(e) => handlePracticeClick(e, subject)}
+                      //   className="bg-purple-100 text-purple-700 px-4 py-2 rounded-xl text-xs font-bold hover:bg-purple-600 hover:text-white transition-all shadow-sm flex items-center gap-1.5"
+                      // >
+                      //   ⚡ Practice Set
+                      // </button>
+                    )}
+                  </div> */}
                 </div>
               </div>
             ))}
           </div>
         )}
+
+        <SubjectQuizModal 
+          isOpen={isSubjectModalOpen}
+          onClose={() => setIsSubjectModalOpen(false)}
+          subject={selectedSubjectQuiz}
+        />
 
         {/* Discussions Section */}
         {!discussionsLoading && discussions.length > 0 && (

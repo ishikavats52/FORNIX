@@ -97,7 +97,7 @@ function TopicsPage() {
                 <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900">Chapter Content</h1>
-                        <p className="text-gray-600 mt-1">Practice quizzes or review notes</p>
+                        <p className="text-gray-600 mt-1">Practice tests or review notes</p>
                     </div>
 
                     <div className="bg-white p-1 rounded-xl shadow-sm border border-gray-200 inline-flex">
@@ -108,7 +108,7 @@ function TopicsPage() {
                                 : 'text-gray-600 hover:bg-gray-50'
                                 }`}
                         >
-                            Quizzes (Topics)
+                            Question Bank (Topics)
                         </button>
                         <button
                             onClick={() => setActiveTab('notes')}
@@ -134,7 +134,7 @@ function TopicsPage() {
                                     onClick={handleStartQuiz}
                                     className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition shadow-lg shadow-orange-200 font-bold"
                                 >
-                                    Start Quiz
+                                    Start Test
                                 </button>
                             </div>
                         )}

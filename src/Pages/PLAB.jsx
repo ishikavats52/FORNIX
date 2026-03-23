@@ -24,7 +24,7 @@ import { canAccessCourse } from '../utils/accessControl';
 import ChapterCountDisplay from '../Components/ChapterCountDisplay';
 import { formatSubjectName } from '../utils/formatters';
 
-function Plab1() {
+function PLAB() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -127,8 +127,10 @@ function Plab1() {
 
                     <div className="flex gap-6 text-sm font-medium text-gray-600">
                         <div className="flex items-center gap-2">
-                            <span className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
-                                🇬🇧
+                            <span className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center">
+                                <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
                             </span>
                             <div>
                                 <div className="font-bold text-gray-900">{subjects.length}</div>
@@ -136,8 +138,10 @@ function Plab1() {
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                🩺
+                            <span className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+                                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                                </svg>
                             </span>
                             <div>
                                 <div className="font-bold text-gray-900">Clinical</div>
@@ -169,7 +173,7 @@ function Plab1() {
 
                             {/* Subtitle */}
                             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-                                We're working hard to bring you comprehensive PLAB1 preparation materials.
+                                We're working hard to bring you comprehensive PLAB preparation materials.
                                 Stay tuned for an amazing learning experience!
                             </p>
 
@@ -191,7 +195,7 @@ function Plab1() {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                                         </svg>
                                     </div>
-                                    <h3 className="font-semibold text-gray-900 mb-2">Practice Quizzes</h3>
+                                    <h3 className="font-semibold text-gray-900 mb-2">Practice Tests</h3>
                                     <p className="text-sm text-gray-600">Test your knowledge with mock exams</p>
                                 </div>
 
@@ -209,7 +213,7 @@ function Plab1() {
                             {/* CTA */}
                             <div className="space-y-4">
                                 <p className="text-gray-700 font-medium">
-                                    Want to be notified when PLAB1 content is available?
+                                    Want to be notified when PLAB content is available?
                                 </p>
                                 <button
                                     onClick={() => navigate('/contact')}
@@ -284,4 +288,4 @@ function Plab1() {
     );
 }
 
-export default Plab1;
+export default PLAB;

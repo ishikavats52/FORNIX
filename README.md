@@ -4,7 +4,7 @@ A modern medical education platform built with React, Redux, and Vite.
 
 ## Features
 
-- 🎓 Course Management (NEET UG, NEET PG, AMC, FMGE, PLAB1)
+- 🎓 Course Management (NEET UG, NEET PG, AMC, FMGE, PLAB)
 - 📝 Interactive Quizzes and Mock Tests
 - 📚 Study Materials and Notes
 - 💳 Razorpay Payment Integration

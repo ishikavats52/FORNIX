@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 
-const AudioPlayer = ({ audioUrl }) => {
+const AudioPlayer = ({ audioUrl, autoPlay = false }) => {
     const audioRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -18,22 +18,41 @@ const AudioPlayer = ({ audioUrl }) => {
         audio.addEventListener("loadedmetadata", updateDuration);
         audio.addEventListener("ended", handleEnded);
 
+        // Auto-play on URL change if it was already playing or explicitly requested
+        // Only if we have a valid source
+        const hasValidSource = audioUrl && typeof audioUrl === 'string' && audioUrl.trim().length > 0;
+        
+        if (hasValidSource && (isPlaying || autoPlay)) {
+            audio.play().then(() => setIsPlaying(true)).catch(err => {
+                // Ignore AbortError which happens on rapid clicks
+                if (err.name !== 'AbortError') {
+                    console.error("Auto-play failed:", err);
+                }
+            });
+        }
+
         return () => {
             audio.removeEventListener("timeupdate", updateTime);
             audio.removeEventListener("loadedmetadata", updateDuration);
             audio.removeEventListener("ended", handleEnded);
         };
-    }, []);
+    }, [audioUrl]); // Depend on audioUrl to trigger on change
 
     const togglePlay = () => {
-        if (!audioRef.current) return;
+        if (!audioRef.current || !audioUrl) return;
 
         if (isPlaying) {
             audioRef.current.pause();
+            setIsPlaying(false);
         } else {
-            audioRef.current.play();
+            audioRef.current.play()
+                .then(() => setIsPlaying(true))
+                .catch(err => {
+                    if (err.name !== 'AbortError') {
+                        console.error("Manual toggle play failed:", err);
+                    }
+                });
         }
-        setIsPlaying(!isPlaying);
     };
 
     const forward = () => {

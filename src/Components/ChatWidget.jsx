@@ -43,7 +43,7 @@ const ChatWidget = () => {
         { value: 'NEET UG', label: '🎓 NEET UG' },
         { value: 'NEET PG', label: '🏥 NEET PG' },
         { value: 'FMGE', label: '🇮🇳 FMGE' },
-        { value: 'PLAB1', label: '🇬🇧 PLAB1' },
+        { value: 'PLAB', label: '🇬🇧 PLAB' },
     ];
 
     // Helper to detect course from query
@@ -53,7 +53,7 @@ const ChatWidget = () => {
         if (lowerText.includes('neet ug') || lowerText.includes('undergraduate')) return 'NEET UG';
         if (lowerText.includes('neet pg') || lowerText.includes('postgraduate')) return 'NEET PG';
         if (lowerText.includes('fmge') || lowerText.includes('foreign medical')) return 'FMGE';
-        if (lowerText.includes('plab') || lowerText.includes('plab1') || lowerText.includes('uk medical')) return 'PLAB1';
+        if (lowerText.includes('plab') || lowerText.includes('PLAB') || lowerText.includes('uk medical')) return 'PLAB';
         return null;
     };
 
@@ -94,8 +94,8 @@ const ChatWidget = () => {
             newCourse = 'NEET PG';
         } else if (path.includes('/courses/fmge')) {
             newCourse = 'FMGE';
-        } else if (path.includes('/courses/plab1')) {
-            newCourse = 'PLAB1';
+        } else if (path.includes('/courses/')) {
+            newCourse = 'PLAB';
         } else if (path === '/' || path === '/dashboard') {
             // Reset to General only on main pages, keep context otherwise if navigating deeply?
             // Actually, safer to default to General if not in a course route to avoid confusion
@@ -143,6 +143,26 @@ const ChatWidget = () => {
         }
     }, [messages, isOpen, showHistory]);
 
+    const renderMessageText = (text) => {
+        if (!text) return null;
+
+        // Split by bold patterns **text**
+        const parts = text.split(/(\*\*.*?\*\*)/g);
+
+        return parts.map((part, i) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+                // Remove asterisks and render as bold/heading-style
+                const content = part.slice(2, -2);
+                return (
+                    <strong key={i} className="block mt-4 mb-2 text-lg font-black text-gray-900 border-l-4 border-orange-500 pl-3 py-1 bg-orange-50/50 rounded-r-md tracking-tight">
+                        {content}
+                    </strong>
+                );
+            }
+            return <span key={i} className="text-gray-700 leading-relaxed">{part}</span>;
+        });
+    };
+
     const handleSend = (e) => {
         e.preventDefault();
         if (!input.trim()) return;
@@ -169,7 +189,7 @@ const ChatWidget = () => {
             courseName: courseToSend,
             sessionId: sessionId
         }));
-        setInput(''); 
+        setInput('');
     };
 
     if (!user) return null; // Or show prompt to login
@@ -178,18 +198,21 @@ const ChatWidget = () => {
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
             {/* Chat Window */}
             <div
-                className={`bg-white h-0 w-0  ${isOpen && "h-[500px] max-w-[calc(100vw-2rem)] max-h-[70vh] w-96"}  rounded-2xl shadow-2xl border border-orange-100 flex flex-col transition-all duration-300 transform origin-bottom-right mb-4 overflow-hidden ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'
+                className={`bg-white/90 backdrop-blur-xl h-0 w-0  ${isOpen && "h-[600px] max-w-[calc(100vw-2rem)] max-h-[85vh] w-[400px]"}  rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-white/20 flex flex-col transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) transform origin-bottom-right mb-4 overflow-hidden ${isOpen ? 'scale-100 opacity-100' : 'scale-90 opacity-0 pointer-events-none'
                     }`}
             >
                 {/* Header */}
-                <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-4 flex justify-between items-center text-white shrink-0">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                            <span className="text-lg">🤖</span>
+                <div className="bg-gradient-to-r from-orange-500 via-orange-600 to-rose-500 p-5 flex justify-between items-center text-white shrink-0 shadow-lg">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-white/30 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20 shadow-inner">
+                            <span className="text-xl">🤖</span>
                         </div>
                         <div>
-                            <h3 className="font-bold text-sm">FORNIX AI</h3>
-                            <p className="text-xs text-orange-100">Study Companion</p>
+                            <h3 className="font-black text-base tracking-tight italic">FORNIX AI</h3>
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                                <p className="text-[10px] text-orange-50 font-bold uppercase tracking-widest">Study Companion</p>
+                            </div>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -254,12 +277,14 @@ const ChatWidget = () => {
                                     className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div
-                                        className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.sender === 'user'
-                                            ? 'bg-orange-500 text-white rounded-br-none'
-                                            : 'bg-white border border-orange-100 text-gray-700 rounded-bl-none shadow-sm'
+                                        className={`max-w-[85%] p-4 rounded-3xl text-sm transition-all duration-300 ${msg.sender === 'user'
+                                            ? 'bg-gradient-to-br from-orange-500 to-rose-500 text-white rounded-br-none shadow-md shadow-orange-200'
+                                            : 'bg-white/80 backdrop-blur-sm border border-orange-100/50 text-gray-700 rounded-bl-none shadow-sm'
                                             }`}
                                     >
-                                        <p className="whitespace-pre-wrap">{msg.text}</p>
+                                        <div className="whitespace-pre-wrap leading-relaxed space-y-2">
+                                            {msg.sender === 'user' ? <span className="font-medium">{msg.text}</span> : renderMessageText(msg.text)}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
