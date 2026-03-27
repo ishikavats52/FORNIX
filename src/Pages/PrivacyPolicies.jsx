@@ -180,7 +180,7 @@ function PrivacyPolicies() {
                             </ul>
                             <div className="mt-6">
                                 <p className="font-semibold text-gray-900">Contact:</p>
-                                <a href="mailto:info@fornixacademy.com" className="text-orange-500 hover:text-orange-600">info@fornixacademy.com</a>
+                                <a href="mailto:Venkat@fornixacademy.com " className="text-orange-500 hover:text-orange-600">Venkat@fornixacademy.com </a>
                             </div>
                         </section>
 

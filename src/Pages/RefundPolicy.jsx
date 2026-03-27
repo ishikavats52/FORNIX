@@ -54,7 +54,7 @@ function RefundPolicy() {
                                 <p className="text-gray-600 mb-4">Refund requests must be submitted within <span className="font-bold text-gray-900">7 days</span> of purchase.</p>
                                 <div className="mt-2">
                                     <p className="font-semibold text-gray-900">Contact:</p>
-                                    <a href="mailto:info@fornixacademy.com" className="text-orange-500 hover:text-orange-600">info@fornixacademy.com</a>
+                                    <a href="mailto:Venkat@fornixacademy.com " className="text-orange-500 hover:text-orange-600">Venkat@fornixacademy.com </a>
                                 </div>
                             </div>
                         </section>
@@ -126,7 +126,7 @@ function RefundPolicy() {
                                     <h3 className="text-xl font-bold text-gray-900 mb-4">Data Deletion Requests</h3>
                                     <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 h-full">
                                         <p className="text-gray-600 mb-2">Users may request deletion by contacting:</p>
-                                        <a href="mailto:info@fornixacademy.com" className="text-orange-500 hover:text-orange-600 font-medium block mb-4">info@fornixacademy.com</a>
+                                        <a href="mailto:Venkat@fornixacademy.com " className="text-orange-500 hover:text-orange-600 font-medium block mb-4">Venkat@fornixacademy.com </a>
 
                                         <p className="text-gray-700 font-medium mb-2">We will:</p>
                                         <ul className="space-y-2 text-sm text-gray-600">

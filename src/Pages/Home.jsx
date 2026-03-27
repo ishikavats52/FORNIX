@@ -68,7 +68,7 @@ function Home() {
           <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-20">
             {/* WhatsApp */}
             <a
-              href="https://wa.me/996552448787"
+              href="https://wa.me/ +91 9030448482"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full shadow-lg transition-all transform hover:scale-110 group"

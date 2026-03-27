@@ -43,7 +43,7 @@ function Header() {
   const courses = [
     { to: '/courses/amc', label: 'AMC' },
     // { to: '/courses/neet-ug', label: 'NEET UG' },
-    // { to: '/courses/neet-pg', label: 'NEET PG' },
+    { to: '/courses/neet-pg', label: 'NEET PG' },
     { to: '/courses/FMGE', label: 'FMGE' },
     { to: '/courses/plab', label: 'PLAB' },
   ];
